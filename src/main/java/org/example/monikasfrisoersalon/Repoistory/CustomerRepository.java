@@ -26,12 +26,11 @@ public class CustomerRepository {
 
         try(Connection c = db.getConnection();
             PreparedStatement ps = c.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery()){
 
+            ResultSet rs = ps.executeQuery()){
             while(rs.next()){
                 result.add(mapRow(rs));
             }
-
         }catch (SQLException e){
             throw new DataAccessException("Kunne ikke hente kunder", e);
         }
@@ -47,7 +46,6 @@ public class CustomerRepository {
             ps.setString(1, customer.getUsername());
             ps.setString(2, customer.getPassword());
             ps.setInt(3, customer.getPhoneNumber());
-
             ps.executeUpdate();
 
         } catch (SQLException e){
@@ -60,7 +58,6 @@ public class CustomerRepository {
 
         try(Connection con = db.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)){
-
             ps.setInt(1, customerId);
             ps.executeUpdate();
 

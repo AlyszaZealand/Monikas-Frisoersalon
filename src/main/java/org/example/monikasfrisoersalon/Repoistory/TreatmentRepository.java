@@ -25,8 +25,8 @@ public class TreatmentRepository {
 
         try(Connection con = db.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery()){
 
+            ResultSet rs = ps.executeQuery()){
             while (rs.next()){
                 results.add(mapRow(rs));
             }
@@ -44,7 +44,6 @@ public class TreatmentRepository {
 
             ps.setString(1, treatment.getTypeOfTreatment());
             ps.setInt(2, treatment.getDuration());
-
             ps.executeUpdate();
 
         } catch (SQLException e){
@@ -60,7 +59,6 @@ public class TreatmentRepository {
 
             ps.setInt(1, treatmentId);
             ps.executeUpdate();
-
         } catch (SQLException e){
             throw new DataAccessException("Kunne ikke fjerne behandlingen", e);
         }

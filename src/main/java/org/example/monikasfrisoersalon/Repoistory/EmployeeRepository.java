@@ -37,12 +37,11 @@ public class EmployeeRepository {
 
         try(Connection c = db.getConnection();
             PreparedStatement ps = c.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery()){
 
+            ResultSet rs = ps.executeQuery()){
             while(rs.next()) {
                 result.add(mapRow(rs));
             }
-
         }catch (SQLException e){
             throw new DataAccessException("Kunne ikke hente medarbejdere", e);
         }
@@ -75,7 +74,6 @@ public class EmployeeRepository {
             ps1.setInt(1, employeeId);
             ps1.executeUpdate();
 
-
             PreparedStatement ps2 = con.prepareStatement(deleteEmployeeSql);
             ps2.setInt(1, employeeId);
             ps2.executeUpdate();
@@ -95,7 +93,6 @@ public class EmployeeRepository {
             throw new DataAccessException("Kunne ikke opdatere adgangskode", e);
         }
     }
-
 
 
     // Retrieves the columns SQL

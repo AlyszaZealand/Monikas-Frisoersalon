@@ -41,7 +41,6 @@ public class AppointmentRepository {
 
             ps.setInt(1, employeeId);
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 results.add(mapRow(rs));
             }
@@ -64,8 +63,8 @@ public class AppointmentRepository {
         List<Appointment> results = new ArrayList<>();
         try(Connection con = db.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery()){
 
+            ResultSet rs = ps.executeQuery()){
             while (rs.next()){
                 results.add(mapRow(rs));
             }
@@ -84,13 +83,13 @@ public class AppointmentRepository {
                 "JOIN customer c ON a.customerid = c.id " +
                 "LEFT JOIN employee e ON a.employeeid = e.id " +
                 "JOIN treatment t ON a.treatmentid = t.id " +
-                "WHERE a.employeeid IS NULL"; // <-- Kun aftaler uden frisør!
+                "WHERE a.employeeid IS NULL";
 
         List<Appointment> results = new ArrayList<>();
         try(Connection con = db.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery()){
 
+            ResultSet rs = ps.executeQuery()){
             while (rs.next()){
                 results.add(mapRow(rs));
             }
@@ -144,11 +143,8 @@ public class AppointmentRepository {
             PreparedStatement ps = c.prepareStatement(sql)){
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-
             ps.setString(1, appointment.getStartdate().format(formatter));
             ps.setString(2, appointment.getEndDate().format(formatter));
-
 
             ps.setInt(3, appointment.getTreatment().getId());
             ps.setInt(4, appointment.getId());
@@ -166,7 +162,6 @@ public class AppointmentRepository {
 
         try(Connection c = db.getConnection();
             PreparedStatement ps = c.prepareStatement(sql)){
-
             ps.setInt(1, appointmentID);
             ps.executeUpdate();
 
@@ -185,14 +180,11 @@ public class AppointmentRepository {
 
         try(Connection c = db.getConnection();
             PreparedStatement ps = c.prepareStatement(sql)){
-
             ps.setInt(1, newAppointment.getEmployee().getId());
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             ps.setString(2, newAppointment.getEndDate().format(formatter));
             ps.setString(3, newAppointment.getStartdate().format(formatter));
-
-
             ps.setInt(4, newAppointment.getId());
 
             ResultSet rs = ps.executeQuery();
@@ -217,14 +209,12 @@ public class AppointmentRepository {
                 "",
                 rs.getInt("c_phone")
         );
-
         Treatment treatment = new Treatment(
                 rs.getInt("t_id"),
                 rs.getString("typeoftreatment"),
                 rs.getInt("duration"),
                 rs.getBoolean("is_active")
         );
-
         Employee employee = null;
         int empId = rs.getInt("e_id");
         if (!rs.wasNull()) {
@@ -234,7 +224,6 @@ public class AppointmentRepository {
                     "",
                     rs.getInt("e_phone"));
         }
-
         String startDateStr = rs.getString("startdate").replace("T", " ");
         String endDateStr = rs.getString("enddate").replace("T", " ");
 
