@@ -15,8 +15,8 @@ public class EmployeeService {
     }
 
     // Create employee
-    public void handleCreateEmployee(int employeeID) {
-        employeeRepository.createEmployee(employeeID);
+    public void handleCreateEmployee(String username, String password, int phonenumber) {
+        employeeRepository.createEmployee(username, password, phonenumber);
     }
 
     // Delete employee

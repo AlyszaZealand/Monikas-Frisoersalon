@@ -33,8 +33,13 @@ public class AppointmentService {
     }
 
     // Check appointment conflicts
-    public void handleCheckConflict(int appointmentID) {
-        appointmentRepository.checkConflict(appointmentID);
+    public void handleCheckConflict(int id, String startdate, String enddate) {
+       try{
+           appointmentRepository.checkConflict(id, startdate, enddate);
+       } catch (SQLException e){
+           //Custom exception
+       }
+
     }
 
 }

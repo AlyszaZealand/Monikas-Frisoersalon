@@ -20,18 +20,43 @@ public class EmployeeRepository {
     }
 
     // Create employee SQL
-    public void createEmployee(int employeeID) {
-        String sql = "";
+    public void createEmployee(String username, String password, int phonenumber) {
+        String sql = "Insert into employee (username,password,phonenumber) values (?,?,?)";
+
+        try(Connection conn = db.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)){
+
+            ps.setString(1,username);
+            ps.setString(2,password);
+            ps.setInt(3,phonenumber);
+
+            ps.executeUpdate();
+
+        }catch (SQLException e){
+            //custom exception??+ maybe??+...
+        }
+
+
     }
 
     // Delete employee SQL
-    public void deleteEmployee(int employeeID) {
-        String sql = "";
+    public void deleteEmployee(int id) {
+        String sql = "Delete  from employee where employeeID=?";
+
+        try(Connection conn = db.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)){
+
+            ps.setInt(1,id);
+            ps.executeUpdate();
+        } catch (SQLException e){
+            //Custom exception???
+        }
+
     }
 
-    // Find employees
+    // Find employees, select skal updateres der er nok måske en specifik til login oplysninger???
     public List<Employee> FindEmployees(){
-        String sql = "select username,password from administrator";
+        String sql = "select username,password from employee";
 
         List<Employee> result = new ArrayList<>();
 
@@ -54,7 +79,6 @@ public class EmployeeRepository {
     }
     // Retrieves the columns SQL
     private Employee mapRow(ResultSet rs) throws SQLException {
-
         return new Employee(
                 rs.getInt("id"),
                 rs.getString("username"),

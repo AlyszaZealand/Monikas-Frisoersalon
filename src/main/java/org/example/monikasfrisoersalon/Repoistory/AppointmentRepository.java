@@ -46,7 +46,7 @@ public class AppointmentRepository {
 
     // Create appointment SQL
     public int createAppointment(int customerid, int employeeid, int treatmentid, boolean appstatus, String startdate, String enddate) throws SQLException {
-        String sql = "Insert into appointment (customerid, employeeid,treatmentid,appstatus,startdate,enddate) values ?,?,?,?,?,? ";
+        String sql = "Insert into appointment (customerid, employeeid,treatmentid,appstatus,startdate,enddate) values (?,?,?,?,?,?) ";
 
         try(Connection c = db.getConnection();
             PreparedStatement ps = c.prepareStatement(sql)){
@@ -77,13 +77,23 @@ public class AppointmentRepository {
     }
 
     // Cancel appointment SQL
-    public void cancelAppointment(int appointment){
+    public void cancelAppointment(int id) throws SQLException {
         String sql = "";
     }
 
-    // Check appointment conflict SQL
-    public void checkConflict(int appointmentID) {
-        String sql = "";
+    // Check appointment conflict SQL skal nok rykkes til SERVICE??
+    public void checkConflict(int id, String startdate, String enddate) throws SQLException {
+        String sql = "Select count (*) from appointment where appointmentID = ? and status = 1 and startdate < ? and enddate > ? ";
+
+        try(Connection conn = db.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)){
+
+            ps.setInt(1,id);
+            ps.setString(2,startdate);
+            ps.setString(3,enddate);
+            ps.executeUpdate();
+        }
+
     }
 
 

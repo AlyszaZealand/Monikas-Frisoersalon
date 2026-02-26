@@ -2,6 +2,8 @@ package org.example.monikasfrisoersalon.Service;
 
 import org.example.monikasfrisoersalon.Repoistory.TreatmentRepository;
 
+import java.sql.SQLException;
+
 public class TreatmentService {
     private final TreatmentRepository treatmentRepository;
 
@@ -11,8 +13,13 @@ public class TreatmentService {
     }
 
     // Create treatment
-    public void handleCreateTreatment(int treatmentID) {
-        treatmentRepository.createTreatment(treatmentID);
+    public void handleCreateTreatment(String treatment, int duraiton) {
+        try{
+            treatmentRepository.createTreatment(treatment, duraiton);
+        }catch (SQLException e){
+            //custom exception needed maybe???
+        }
+
     }
 
     // Delete treatment
