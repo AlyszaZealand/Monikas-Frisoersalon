@@ -1,0 +1,70 @@
+
+create table customer (
+id int primary key auto_increment not null,
+username varchar(50) not null,
+password varchar(50) not null,
+phonenumber int
+)
+;
+create table employee (
+id int primary key auto_increment not null,
+username varchar(50) not null,
+password varchar(50) not null,
+phonenumber int
+)
+;
+create table administrator (
+id int primary key auto_increment not null,
+username varchar(50) not null,
+password varchar(50) not null,
+phonenumber int
+)
+;
+create table treatment (
+id int primary key auto_increment not null,
+typeoftreatment varchar(50) not null,
+duration int
+)
+;
+create table appointment (
+id int primary key auto_increment not null,
+customerid int,
+employeeid int,
+treatmentid int,
+appstatus boolean,
+startdate datetime,
+enddate datetime,
+foreign key (customerid) references customer(id),
+foreign key (employeeid) references employee(id),
+foreign key (treatmentid) references treatment(id)
+)
+;
+
+insert into customer(username, password, phonenumber) values
+('klaus', 'klaus123', 34212343),
+('morten', 'morten123', 12392154),
+('louise', 'louise123', 23541278)
+;
+
+insert into employee(username, password, phonenumber) values
+('brian', 'brian123', 98652387),
+('mette', 'mette123', 67416788),
+('hanne', 'hanne123', 26317664)
+;
+
+insert into administrator(username, password, phonenumber) values
+('monika', 'monika123', 11223344)
+;
+
+insert into treatment(typeoftreatment, duration) values
+('Wash & brush', 30),
+('BuzzCut', 30),
+('Colour', 120),
+('Cut & style(Long)', 120),
+('Cut & style(Medium)', 90),
+('Cut & style(Short)', 60)
+;
+
+INSERT INTO appointment(customerid, employeeid, treatmentid, appstatus, startdate, enddate)
+VALUES (1, 1, 1, true, '2026-02-27 12:00:00', '2026-02-27 12:30:00');
+
