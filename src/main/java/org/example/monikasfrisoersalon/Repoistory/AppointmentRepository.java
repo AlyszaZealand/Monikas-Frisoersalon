@@ -28,7 +28,7 @@ public class AppointmentRepository {
         String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " +
                 "c.id AS c_id, c.username AS c_username, c.phonenumber AS c_phone, " +
                 "e.id AS e_id, e.username AS e_username, e.phonenumber AS e_phone, " +
-                "t.id AS t_id, t.typeoftreatment, t.duration, t.is_active " +
+                "t.id AS t_id, t.typeoftreatment, t.duration, t.isactive " +
                 "FROM appointment a " +
                 "JOIN customer c ON a.customerid = c.id " +
                 "JOIN employee e ON a.employeeid = e.id " +
@@ -54,7 +54,7 @@ public class AppointmentRepository {
         String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " +
                 "c.id AS c_id, c.username AS c_username, c.phonenumber AS c_phone, " +
                 "e.id AS e_id, e.username AS e_username, e.phonenumber AS e_phone, " +
-                "t.id AS t_id, t.typeoftreatment, t.duration, t.is_active " +
+                "t.id AS t_id, t.typeoftreatment, t.duration, t.isactive " +
                 "FROM appointment a " +
                 "JOIN customer c ON a.customerid = c.id " +
                 "LEFT JOIN employee e ON a.employeeid = e.id " +
@@ -78,7 +78,7 @@ public class AppointmentRepository {
         String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " +
                 "c.id AS c_id, c.username AS c_username, c.phonenumber AS c_phone, " +
                 "e.id AS e_id, e.username AS e_username, e.phonenumber AS e_phone, " +
-                "t.id AS t_id, t.typeoftreatment, t.duration, t.is_active " +
+                "t.id AS t_id, t.typeoftreatment, t.duration, t.isactive " +
                 "FROM appointment a " +
                 "JOIN customer c ON a.customerid = c.id " +
                 "LEFT JOIN employee e ON a.employeeid = e.id " +
@@ -110,11 +110,10 @@ public class AppointmentRepository {
             ps.setInt(1, appointment.getCustomer().getId());
             ps.setInt(2, appointment.getEmployee().getId());
             ps.setInt(3, appointment.getTreatment().getId());
-            ps.setBoolean(4, appointment.getAppStatus());
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            ps.setString(5, appointment.getStartdate().format(formatter));
-            ps.setString(6, appointment.getEndDate().format(formatter));
+            ps.setString(4, appointment.getStartdate().format(formatter));
+            ps.setString(5, appointment.getEndDate().format(formatter));
 
             return ps.executeUpdate();
         } catch (SQLException e) {
@@ -157,12 +156,12 @@ public class AppointmentRepository {
     }
 
 
-    public void cancelAppointment(int appointmentID){
+    public void cancelAppointment(int appointmentId){
         String sql = "UPDATE appointment SET appstatus = false WHERE id = ?";
 
         try(Connection c = db.getConnection();
             PreparedStatement ps = c.prepareStatement(sql)){
-            ps.setInt(1, appointmentID);
+            ps.setInt(1, appointmentId);
             ps.executeUpdate();
 
         }catch (SQLException e){
@@ -213,7 +212,7 @@ public class AppointmentRepository {
                 rs.getInt("t_id"),
                 rs.getString("typeoftreatment"),
                 rs.getInt("duration"),
-                rs.getBoolean("is_active")
+                rs.getBoolean("isactive")
         );
         Employee employee = null;
         int empId = rs.getInt("e_id");

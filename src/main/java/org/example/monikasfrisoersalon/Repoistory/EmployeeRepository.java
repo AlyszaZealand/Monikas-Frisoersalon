@@ -19,15 +19,6 @@ public class EmployeeRepository {
         this.db = db;
     }
 
-    // Create employee SQL
-    public void createEmployee(int employeeID) {
-        String sql = "";
-    }
-
-    // Delete employee SQL
-    public void deleteEmployee(int employeeID) {
-        String sql = "";
-    }
 
     // Find employees
     public List<Employee> findEmployees(){
