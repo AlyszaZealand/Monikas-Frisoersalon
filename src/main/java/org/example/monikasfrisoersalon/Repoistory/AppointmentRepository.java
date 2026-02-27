@@ -112,7 +112,7 @@ public class AppointmentRepository {
             ps.setInt(3, appointment.getTreatment().getId());
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            ps.setString(4, appointment.getStartdate().format(formatter));
+            ps.setString(4, appointment.getStartDate().format(formatter));
             ps.setString(5, appointment.getEndDate().format(formatter));
 
             return ps.executeUpdate();
@@ -142,7 +142,7 @@ public class AppointmentRepository {
             PreparedStatement ps = c.prepareStatement(sql)){
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            ps.setString(1, appointment.getStartdate().format(formatter));
+            ps.setString(1, appointment.getStartDate().format(formatter));
             ps.setString(2, appointment.getEndDate().format(formatter));
 
             ps.setInt(3, appointment.getTreatment().getId());
@@ -183,7 +183,7 @@ public class AppointmentRepository {
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             ps.setString(2, newAppointment.getEndDate().format(formatter));
-            ps.setString(3, newAppointment.getStartdate().format(formatter));
+            ps.setString(3, newAppointment.getStartDate().format(formatter));
             ps.setInt(4, newAppointment.getId());
 
             ResultSet rs = ps.executeQuery();

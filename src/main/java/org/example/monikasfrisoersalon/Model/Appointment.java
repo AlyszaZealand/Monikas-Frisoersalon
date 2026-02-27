@@ -36,7 +36,7 @@ public class Appointment {
     public boolean getAppStatus() {
         return appStatus;
     }
-    public LocalDateTime getStartdate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
     public LocalDateTime getEndDate() {

@@ -49,7 +49,16 @@ class AppointmentRepositoryTest {
         if (!result.isEmpty()) {
             int foundEmployeeId = result.get(0).getEmployee().getId();
             assertEquals(testEmployeeId, foundEmployeeId, "Aftalen SKAL tilhøre medarbejder 1");
+
+            Appointment firstAssignment = result.get(0);
+            assertEquals(1, firstAssignment.getId(), "Den første aftale burde have ID 1");
+
+            assertNotNull(firstAssignment.getEmployee(), "Frisør-objektet må ikke være null");
+            assertEquals(1, firstAssignment.getEmployee().getId(), "Frisørens ID skal være 1");
+            assertEquals("brian", firstAssignment.getEmployee().getUsername(), "Frisørens navn skal være 'brian'");
         }
+
+
     }
 
     @Test
@@ -58,7 +67,16 @@ class AppointmentRepositoryTest {
 
         assertNotNull(result, "Listen må ikke være null");
         assertFalse(result.isEmpty(), "Listen burde indeholde mindst én aftale fra SchemaSeed");
-        assertTrue(result.get(0).getId() > 0, "Aftalen skal have et ID");
+        Appointment firstAssignment = result.get(0);
+        assertEquals(1, firstAssignment.getId(), "Den første aftale burde have ID 1");
+
+        assertNotNull(firstAssignment.getEmployee(), "Frisør-objektet må ikke være null");
+        assertEquals(1, firstAssignment.getEmployee().getId(), "Frisørens ID skal være 1");
+        assertEquals("brian", firstAssignment.getEmployee().getUsername(), "Frisørens navn skal være 'brian'");
+
+        assertNotNull(firstAssignment.getCustomer(), "Kunde-objektet må ikke være null");
+        assertEquals(1, firstAssignment.getCustomer().getId(), "Kundens ID skal være 1");
+        assertEquals("klaus", firstAssignment.getCustomer().getUsername(), "Kundens navn skal være 'klaus'");
     }
 
 
@@ -72,6 +90,11 @@ class AppointmentRepositoryTest {
 
         boolean missingEmployee = (unassignedApp.getEmployee() == null || unassignedApp.getEmployee().getId() == 0);
         assertTrue(missingEmployee, "Aftalen skal være unassigned (uden medarbejder)");
+
+        Appointment firstAssignment = result.get(0);
+        assertNotNull(firstAssignment.getCustomer(), "Kunde-objektet må ikke være null");
+        assertEquals(2, firstAssignment.getCustomer().getId(), "Kundens ID skal være 2");
+        assertEquals("morten", firstAssignment.getCustomer().getUsername(), "Kundens navn skal være 'morten'");
 
     }
 
@@ -92,7 +115,7 @@ class AppointmentRepositoryTest {
         List<Appointment> briansAppointments = appointmentRepo.findAppointmentsByEmployee(1);
         Appointment savedApp = null;
         for (Appointment aftale : briansAppointments) {
-            if (aftale.getStartdate().getYear() == 2030) {
+            if (aftale.getStartDate().getYear() == 2030) {
                 savedApp = aftale;
                 break;
             }
@@ -139,9 +162,8 @@ class AppointmentRepositoryTest {
         assertEquals(newEmployeeId, updatedAppointment.getEmployee().getId(), "Medarbejder-ID burde nu være 2");
         assertEquals("mette", updatedAppointment.getEmployee().getUsername(), "Navnet på aftalen burde nu være 'mette'!");
 
+        // Ryd op - sæt aftalen tilbage til Brian
         appointmentRepo.reassignAppointment(testAppointmentId, 1);
-
-
     }
 
     @Test
@@ -161,9 +183,9 @@ class AppointmentRepositoryTest {
 
         List<Appointment> allAppAfter = appointmentRepo.findAllAppointments();
         Appointment updatedApp = null;
-        for (Appointment aftale : allAppAfter) {
-            if (aftale.getId() == testAppointmentId) {
-                updatedApp = aftale;
+        for (Appointment app : allAppAfter) {
+            if (app.getId() == testAppointmentId) {
+                updatedApp = app;
                 break;
             }
         }
@@ -172,12 +194,61 @@ class AppointmentRepositoryTest {
         assertEquals(nyEmployeeId, updatedApp.getEmployee().getId(), "Aftalen skal nu have Mettes ID (2)");
         assertEquals("mette", updatedApp.getEmployee().getUsername(), "Navnet på aftalen burde nu være 'mette'");
 
+        // Ryd op - sæt aftalen tilbage til ufordelt
         String sql = "UPDATE appointment SET employeeid = NULL WHERE id = ?";
         try (java.sql.Connection con = db.getConnection();
              java.sql.PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, testAppointmentId);
             ps.executeUpdate();
         }
+    }
+
+    @Test
+    void testUpdateAppointment() {
+
+        List<Appointment> allAppointments = appointmentRepo.findAllAppointments();
+        Appointment appointmentForUpdate = null;
+        for (Appointment app : allAppointments) {
+            if (app.getId() == 1) {
+                appointmentForUpdate = app;
+                break;
+            }
+        }
+        assertNotNull(appointmentForUpdate, "Aftale 1 skal findes i databasen for at testen kan køre");
+
+        LocalDateTime originalStart = appointmentForUpdate.getStartDate();
+        LocalDateTime originalEnd = appointmentForUpdate.getEndDate();
+        Treatment originalTreatment = appointmentForUpdate.getTreatment();
+
+
+        LocalDateTime newStart = LocalDateTime.of(2027, 5, 10, 14, 0);
+        LocalDateTime newEnd = LocalDateTime.of(2027, 5, 10, 14, 45);
+        Treatment newTreatment = new Treatment(2, "BuzzCut", 30, true);
+
+        appointmentForUpdate.setStartDate(newStart);
+        appointmentForUpdate.setEndDate(newEnd);
+        appointmentForUpdate.setTreatment(newTreatment);
+        appointmentRepo.updateAppointment(appointmentForUpdate);
+
+        List<Appointment> appointmentAfterUpdate = appointmentRepo.findAllAppointments();
+        Appointment updatedAppointment = null;
+        for (Appointment aftale : appointmentAfterUpdate) {
+            if (aftale.getId() == 1) {
+                updatedAppointment = aftale;
+                break;
+            }
+        }
+
+        assertNotNull(updatedAppointment, "Aftalen skal stadig findes efter opdateringen");
+
+        assertEquals(newStart, updatedAppointment.getStartDate(), "Startdatoen er ikke blevet opdateret i databasen");
+        assertEquals(2, updatedAppointment.getTreatment().getId(), "Behandlingens ID burde nu være 2 (BuzzCut)");
+
+        // Ryd op - sæt aftalen tilbage til originalt tidspunkt og behandling
+        updatedAppointment.setStartDate(originalStart);
+        updatedAppointment.setEndDate(originalEnd);
+        updatedAppointment.setTreatment(originalTreatment);
+        appointmentRepo.updateAppointment(updatedAppointment);
     }
 
 }
