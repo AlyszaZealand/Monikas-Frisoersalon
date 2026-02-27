@@ -127,18 +127,17 @@ class AppointmentRepositoryTest {
 
         appointmentRepo.reassignAppointment(testAppointmentId, newEmployeeId);
         List<Appointment> allAppointments = appointmentRepo.findAllAppointments();
-        Appointment opdateretAftale = null;
+        Appointment updatedAppointment = null;
 
         for (Appointment app : allAppointments) {
             if (app.getId() == testAppointmentId) {
-                opdateretAftale = app;
+                updatedAppointment = app;
                 break;
             }
         }
-
-        assertNotNull(opdateretAftale, "Aftalen burde stadig findes i databasen");
-        assertEquals(newEmployeeId, opdateretAftale.getEmployee().getId(), "Medarbejder-ID burde nu være 2");
-        assertEquals("mette", opdateretAftale.getEmployee().getUsername(), "Navnet på aftalen burde nu være 'mette'!");
+        assertNotNull(updatedAppointment, "Aftalen burde stadig findes i databasen");
+        assertEquals(newEmployeeId, updatedAppointment.getEmployee().getId(), "Medarbejder-ID burde nu være 2");
+        assertEquals("mette", updatedAppointment.getEmployee().getUsername(), "Navnet på aftalen burde nu være 'mette'!");
 
         appointmentRepo.reassignAppointment(testAppointmentId, 1);
 
