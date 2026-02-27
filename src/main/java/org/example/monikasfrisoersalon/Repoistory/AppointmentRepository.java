@@ -170,6 +170,24 @@ public class AppointmentRepository {
     }
 
 
+    public int deleteAppointmentsOlderThan(LocalDateTime cutoffDate) {
+        String sql = "DELETE FROM appointment WHERE enddate < ?";
+
+        try (Connection con = db.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+
+            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            ps.setString(1, cutoffDate.format(formatter));
+
+            return ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Kunne ikke slette gamle aftaler", e);
+        }
+    }
+
+
     public boolean checkForConflict(Appointment newAppointment) {
         String sql = "SELECT COUNT(*) FROM appointment " +
                 "WHERE employeeid = ? " +
@@ -191,13 +209,12 @@ public class AppointmentRepository {
                 int numberOfConflicts = rs.getInt(1);
                 return numberOfConflicts > 0;
             }
-
         }catch (SQLException e){
             throw new DataAccessException("Kunne ikke tjekke for tids-konflikter", e);
         }
-
         return false;
     }
+
 
     private Appointment mapRow(ResultSet rs) throws SQLException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

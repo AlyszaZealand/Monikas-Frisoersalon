@@ -166,6 +166,7 @@ class AppointmentRepositoryTest {
         appointmentRepo.reassignAppointment(testAppointmentId, 1);
     }
 
+
     @Test
     void testAssignUnassignedAppointment() throws SQLException {
         List<Appointment> unassignedAppointments = appointmentRepo.findUnassignedAppointments();
@@ -202,6 +203,7 @@ class AppointmentRepositoryTest {
             ps.executeUpdate();
         }
     }
+
 
     @Test
     void testUpdateAppointment() {
@@ -251,4 +253,129 @@ class AppointmentRepositoryTest {
         appointmentRepo.updateAppointment(updatedAppointment);
     }
 
+
+    @Test
+    void testCancelAppointment() {
+        int testAppointmentId = 1;
+
+        List<Appointment> allAppointments = appointmentRepo.findAllAppointments();
+        Appointment appointmentToCancel = null;
+        for (Appointment app : allAppointments) {
+            if (app.getId() == testAppointmentId) {
+                appointmentToCancel = app;
+                break;
+            }
+        }
+        assertNotNull(appointmentToCancel, "Aftalen skal findes i databasen for at testen kan køre");
+        assertTrue(appointmentToCancel.getAppStatus(), "Aftalen skal starte med at være aktiv (appstatus = true)");
+        appointmentRepo.cancelAppointment(testAppointmentId);
+
+
+        List<Appointment> appointmentsAfter = appointmentRepo.findAllAppointments();
+        Appointment cancelledAppointment = null;
+        for (Appointment app : appointmentsAfter) {
+            if (app.getId() == testAppointmentId) {
+                cancelledAppointment = app;
+                break;
+            }
+        }
+        assertNotNull(cancelledAppointment, "Aftalen skal stadig findes i databasen efter aflysning");
+        assertFalse(cancelledAppointment.getAppStatus(), "Aftalen skulle nu være aflyst (appstatus = false)");
+
+
+        // Ryd op - sæt aftalen tilbage til aktiv
+        String sql = "UPDATE appointment SET appstatus = true WHERE id = ?";
+        try (java.sql.Connection con = db.getConnection();
+             java.sql.PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, testAppointmentId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Kunne ikke genaktivere aftalen: " + e.getMessage());
+        }
+    }
+
+
+    @Test
+    void testDeleteAppointmentsOlderThan() throws SQLException {
+        Customer testCustomer = new Customer(1, "klaus", "", 12345678);
+        Employee testEmployee = new Employee(1, "brian", "", 12345678);
+        Treatment testTreatment = new Treatment(1, "Wash & brush", 30, true);
+        LocalDateTime oldStartDate = LocalDateTime.of(2020, 1, 1, 10, 0);
+        LocalDateTime oldEndDate = LocalDateTime.of(2020, 1, 1, 10, 30);
+        Appointment oldAppointment = new Appointment(0, testCustomer, testEmployee, testTreatment, true, oldStartDate, oldEndDate);
+
+        appointmentRepo.createAppointment(oldAppointment);
+        LocalDateTime cutoffDate = LocalDateTime.of(2022, 1, 1, 0, 0);
+
+        int deletedRows = appointmentRepo.deleteAppointmentsOlderThan(cutoffDate);
+        assertTrue(deletedRows >= 1, "Der skulle have været mindst én aftale, der blev slettet (den fra 2020)");
+
+        List<Appointment> allAppointments = appointmentRepo.findAllAppointments();
+        boolean foundOld = false;
+        boolean foundSchemaSeedAppointment = false;
+
+        for (Appointment app : allAppointments) {
+            if (app.getStartDate().getYear() == 2020) {
+                foundOld = true;
+            }
+            if (app.getId() == 1) {
+                foundSchemaSeedAppointment = true;
+            }
+        }
+
+        assertFalse(foundOld, "Aftalen fra 2020 skulle have været slettet");
+
+        assertTrue(foundSchemaSeedAppointment, "Aftalen fra SchemaSeed (ID 1) skulle stadig være i databasen, da den er nyere end cutoff-datoen");
+
+        // Ryd op - slet den gamle aftale hvis den stadig findes
+        String sql = "DELETE FROM appointment WHERE startdate = '2020-01-01 10:00:00'";
+        try (java.sql.Connection con = db.getConnection();
+             java.sql.PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.executeUpdate();
+        }
+    }
+
+
+    @Test
+    void testCheckForConflict() {
+        List<Appointment> allAppointments = appointmentRepo.findAllAppointments();
+        assertFalse(allAppointments.isEmpty(), "Der skal være mindst én aftale i databasen for at køre testen");
+
+        Appointment existingApp = allAppointments.get(0);
+        Employee busyEmployee = existingApp.getEmployee();
+        LocalDateTime existingStart = existingApp.getStartDate();
+        LocalDateTime existingEnd = existingApp.getEndDate();
+
+        Customer testCustomer = new Customer(1, "klaus", "", 12345678);
+        Treatment testTreatment = new Treatment(1, "Wash", 30, true);
+
+        int otherEmployeeId = (busyEmployee.getId() == 1) ? 2 : 1;
+        Employee freeEmployee = new Employee(otherEmployeeId, "other", "", 12345678);
+
+
+        //test scenarie A: Opretter en aftale der overlapper med eksisterende aftale for samme medarbejder (skal give konflikt(return true))
+        LocalDateTime conflictStart = existingStart.plusMinutes(5);
+        LocalDateTime conflictEnd = existingEnd.plusMinutes(5);
+        Appointment conflictingAppointment = new Appointment(0, testCustomer, busyEmployee, testTreatment, true, conflictStart, conflictEnd);
+
+        //test scenarie B: Opretter en aftale der er helt adskilt i tid (skal ikke give konflikt(return false))
+        LocalDateTime freeStart = existingStart.plusDays(7);
+        LocalDateTime freeEnd = existingEnd.plusDays(7);
+        Appointment freeAppointment = new Appointment(0, testCustomer, busyEmployee, testTreatment, true, freeStart, freeEnd);
+
+        //test scenarie C: Opretter en aftale der overlapper i tid men for en anden medarbejder (skal ikke give konflikt(return false))
+        Appointment otherEmployeeAppointment = new Appointment(0, testCustomer, freeEmployee, testTreatment, true, existingStart, existingEnd);
+
+        // test scenarie A
+        boolean hasConflict = appointmentRepo.checkForConflict(conflictingAppointment);
+        assertTrue(hasConflict, "Scenarie A: Der burde være en konflikt når aftalen overlapper med en eksisterende aftale for samme medarbejder");
+
+        // test scenarie B
+        boolean isFree = appointmentRepo.checkForConflict(freeAppointment);
+        assertFalse(isFree, "Scenarie B: Der burde ikke være en konflikt når aftalen er adskilt i tid fra eksisterende aftaler for samme medarbejder");
+
+        // test scenarie C
+        boolean otherIsFree = appointmentRepo.checkForConflict(otherEmployeeAppointment);
+        assertFalse(otherIsFree, "Scenarie C: Der burde ikke være en konflikt når aftalen overlap");
+    }
 }

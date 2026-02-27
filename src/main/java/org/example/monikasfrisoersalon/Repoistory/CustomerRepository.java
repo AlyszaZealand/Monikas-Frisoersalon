@@ -54,7 +54,7 @@ public class CustomerRepository {
     }
 
     public void anonymizeCustomer(int customerId) {
-        String sql = "UPDATE customer SET password = 'GDPR_SLETTET', phonenumber = 0 WHERE id = ?";
+        String sql = "UPDATE customer SET username = 'Anonym', password = 'GDPR_SLETTET', phonenumber = 0 WHERE id = ?";
 
         try(Connection con = db.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)){
