@@ -144,4 +144,40 @@ class AppointmentRepositoryTest {
 
     }
 
+    @Test
+    void testAssignUnassignedAppointment() throws SQLException {
+        List<Appointment> unassignedAppointments = appointmentRepo.findUnassignedAppointments();
+
+        assertFalse(unassignedAppointments.isEmpty(), "Der skal være mindst én ufordelt aftale i databasen for at køre testen");
+
+        Appointment unassignedApp = unassignedAppointments.get(0);
+        int testAppointmentId = unassignedApp.getId();
+        int nyEmployeeId = 2;
+
+        boolean missingEmployee = (unassignedApp.getEmployee() == null || unassignedApp.getEmployee().getId() == 0);
+        assertTrue(missingEmployee, "Aftalen skal starte med at være ufordelt (NULL)");
+
+        appointmentRepo.reassignAppointment(testAppointmentId, nyEmployeeId);
+
+        List<Appointment> allAppAfter = appointmentRepo.findAllAppointments();
+        Appointment updatedApp = null;
+        for (Appointment aftale : allAppAfter) {
+            if (aftale.getId() == testAppointmentId) {
+                updatedApp = aftale;
+                break;
+            }
+        }
+
+        assertNotNull(updatedApp, "Aftalen burde stadig findes i databasen");
+        assertEquals(nyEmployeeId, updatedApp.getEmployee().getId(), "Aftalen skal nu have Mettes ID (2)");
+        assertEquals("mette", updatedApp.getEmployee().getUsername(), "Navnet på aftalen burde nu være 'mette'");
+
+        String sql = "UPDATE appointment SET employeeid = NULL WHERE id = ?";
+        try (java.sql.Connection con = db.getConnection();
+             java.sql.PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, testAppointmentId);
+            ps.executeUpdate();
+        }
+    }
+
 }
