@@ -144,7 +144,6 @@ public class AppointmentRepository {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             ps.setString(1, appointment.getStartDate().format(formatter));
             ps.setString(2, appointment.getEndDate().format(formatter));
-
             ps.setInt(3, appointment.getTreatment().getId());
             ps.setInt(4, appointment.getId());
 

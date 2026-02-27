@@ -19,7 +19,7 @@ public class CustomerRepository {
         this.db = db;
     }
 
-    public List<Customer> findCustomers(){
+    public List<Customer> findAllCustomers(){
         String sql = "select id, username, password, phonenumber from customer";
 
         List<Customer> result = new ArrayList<>();
