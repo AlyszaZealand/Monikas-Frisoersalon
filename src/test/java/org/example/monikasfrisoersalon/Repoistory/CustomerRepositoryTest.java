@@ -25,7 +25,6 @@ class CustomerRepositoryTest {
     @AfterEach
     void tearDown() {
         String sql = "DELETE FROM customer WHERE username = 'Hans' OR username = 'Anonym'";
-
         try (java.sql.Connection con = db.getConnection();
              java.sql.PreparedStatement ps = con.prepareStatement(sql)) {
             ps.executeUpdate();

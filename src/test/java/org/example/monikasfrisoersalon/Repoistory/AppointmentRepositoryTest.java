@@ -27,12 +27,11 @@ class AppointmentRepositoryTest {
 
     @AfterEach
     void tearDown() {
-        String sql = "DELETE FROM appointment WHERE startdate >= '2030-01-01 00:00:00'";
+        String sql = "DELETE FROM appointment WHERE startdate >= '2030-01-01 00:00:00' OR YEAR(startdate) = 2018";
+
         try (java.sql.Connection con = db.getConnection();
              java.sql.PreparedStatement ps = con.prepareStatement(sql)) {
-
             ps.executeUpdate();
-
         } catch (java.sql.SQLException e) {
             System.out.println("Kunne ikke rydde op i databasen: " + e.getMessage());
         }
@@ -102,7 +101,7 @@ class AppointmentRepositoryTest {
     void testCreateAppointment() throws SQLException {
         Customer testCustomer = new Customer(1, "testkunde", "",  12345678);
         Employee testEmployee = new Employee(1, "testmedarbejder", "", 87654321);
-        Treatment testTreatment = new Treatment(1, "testbehandling", 30, true);
+        Treatment testTreatment = new Treatment(1, "testbehandling", 30, 150,true);
         LocalDateTime startDate = LocalDateTime.of(2030, 1, 1, 10, 0);
         LocalDateTime endDate = LocalDateTime.of(2030, 1, 1, 10, 30);
 
@@ -225,7 +224,7 @@ class AppointmentRepositoryTest {
 
         LocalDateTime newStart = LocalDateTime.of(2027, 5, 10, 14, 0);
         LocalDateTime newEnd = LocalDateTime.of(2027, 5, 10, 14, 45);
-        Treatment newTreatment = new Treatment(2, "BuzzCut", 30, true);
+        Treatment newTreatment = new Treatment(2, "BuzzCut", 30, 150,true);
 
         appointmentForUpdate.setStartDate(newStart);
         appointmentForUpdate.setEndDate(newEnd);
@@ -299,7 +298,7 @@ class AppointmentRepositoryTest {
     void testDeleteAppointmentsOlderThan() throws SQLException {
         Customer testCustomer = new Customer(1, "klaus", "", 12345678);
         Employee testEmployee = new Employee(1, "brian", "", 12345678);
-        Treatment testTreatment = new Treatment(1, "Wash & brush", 30, true);
+        Treatment testTreatment = new Treatment(1, "Wash & brush", 30, 150,true);
         LocalDateTime oldStartDate = LocalDateTime.of(2020, 1, 1, 10, 0);
         LocalDateTime oldEndDate = LocalDateTime.of(2020, 1, 1, 10, 30);
         Appointment oldAppointment = new Appointment(0, testCustomer, testEmployee, testTreatment, true, oldStartDate, oldEndDate);
@@ -347,7 +346,7 @@ class AppointmentRepositoryTest {
         LocalDateTime existingEnd = existingApp.getEndDate();
 
         Customer testCustomer = new Customer(1, "klaus", "", 12345678);
-        Treatment testTreatment = new Treatment(1, "Wash", 30, true);
+        Treatment testTreatment = new Treatment(1, "Wash", 30, 150,true);
 
         int otherEmployeeId = (busyEmployee.getId() == 1) ? 2 : 1;
         Employee freeEmployee = new Employee(otherEmployeeId, "other", "", 12345678);
@@ -377,5 +376,30 @@ class AppointmentRepositoryTest {
         // test scenarie C
         boolean otherIsFree = appointmentRepo.checkForConflict(otherEmployeeAppointment);
         assertFalse(otherIsFree, "Scenarie C: Der burde ikke være en konflikt når aftalen overlap");
+    }
+
+    @Test
+    void testCalculateTotalRevenue() throws SQLException {
+        int initialRevenue = appointmentRepo.calculateTotalRevenue();
+
+        Customer testCustomer = new Customer(1, "DummyKunde", "pass", 12345678);
+        Employee testEmployee = new Employee(1, "DummyFrisør", "pass", 12345678);
+        Treatment testTreatment = new Treatment(1, "Wash & brush", 30, 150, true);
+
+        Appointment pastCompletedApp = new Appointment(0, testCustomer, testEmployee, testTreatment, true,
+                LocalDateTime.of(2018, 5, 10, 10, 0),
+                LocalDateTime.of(2018, 5, 10, 10, 30));
+        appointmentRepo.createAppointment(pastCompletedApp);
+
+        // Opret en AFLYST tid i 2018 (appstatus = false).
+        Appointment pastCancelledApp = new Appointment(0, testCustomer, testEmployee, testTreatment, false,
+                LocalDateTime.of(2018, 6, 11, 10, 0),
+                LocalDateTime.of(2018, 6, 11, 10, 30));
+        appointmentRepo.createAppointment(pastCancelledApp);
+
+        int newTotalRevenue = appointmentRepo.calculateTotalRevenue();
+        int expectedIncrease = 150;
+        assertEquals(initialRevenue + expectedIncrease, newTotalRevenue,
+                "Indtjeningen burde kun stige med prisen for den ene fuldførte tid fra 2018");
     }
 }

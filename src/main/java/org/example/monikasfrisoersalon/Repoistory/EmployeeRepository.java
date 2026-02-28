@@ -22,7 +22,7 @@ public class EmployeeRepository {
 
     // Find employees
     public List<Employee> findEmployees(){
-        String sql = "select id, username, password, phonenumber from administrator";
+        String sql = "select id, username, password, phonenumber from employee";
 
         List<Employee> result = new ArrayList<>();
 
@@ -38,6 +38,7 @@ public class EmployeeRepository {
         }
         return result;
     }
+
 
     public void createEmployee(Employee employee) {
         String sql = "INSERT INTO employee (username, password, phonenumber) VALUES (?, ?, ?)";
@@ -56,6 +57,7 @@ public class EmployeeRepository {
         }
     }
 
+
     public void deleteEmployeeSafely(int employeeId) {
         String removeAssignedSql = "UPDATE appointment SET employeeid = NULL WHERE employeeid = ?";
         String deleteEmployeeSql = "DELETE FROM employee WHERE id = ?";
@@ -73,6 +75,7 @@ public class EmployeeRepository {
         }
     }
 
+
     public void updatePassword(int employeeId, String newPassword) {
         String sql = "UPDATE employee SET password = ? WHERE id = ?";
         try(Connection con = db.getConnection();
@@ -84,7 +87,6 @@ public class EmployeeRepository {
             throw new DataAccessException("Kunne ikke opdatere adgangskode", e);
         }
     }
-
 
     // Retrieves the columns SQL
     private Employee mapRow(ResultSet rs) throws SQLException {

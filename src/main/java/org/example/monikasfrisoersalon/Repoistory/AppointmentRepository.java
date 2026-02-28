@@ -28,7 +28,7 @@ public class AppointmentRepository {
         String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " +
                 "c.id AS c_id, c.username AS c_username, c.phonenumber AS c_phone, " +
                 "e.id AS e_id, e.username AS e_username, e.phonenumber AS e_phone, " +
-                "t.id AS t_id, t.typeoftreatment, t.duration, t.isactive " +
+                "t.id AS t_id, t.typeoftreatment, t.duration, t.price, t.isactive " +
                 "FROM appointment a " +
                 "JOIN customer c ON a.customerid = c.id " +
                 "JOIN employee e ON a.employeeid = e.id " +
@@ -54,7 +54,7 @@ public class AppointmentRepository {
         String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " +
                 "c.id AS c_id, c.username AS c_username, c.phonenumber AS c_phone, " +
                 "e.id AS e_id, e.username AS e_username, e.phonenumber AS e_phone, " +
-                "t.id AS t_id, t.typeoftreatment, t.duration, t.isactive " +
+                "t.id AS t_id, t.typeoftreatment, t.duration, t.price, t.isactive " +
                 "FROM appointment a " +
                 "JOIN customer c ON a.customerid = c.id " +
                 "LEFT JOIN employee e ON a.employeeid = e.id " +
@@ -78,7 +78,7 @@ public class AppointmentRepository {
         String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " +
                 "c.id AS c_id, c.username AS c_username, c.phonenumber AS c_phone, " +
                 "e.id AS e_id, e.username AS e_username, e.phonenumber AS e_phone, " +
-                "t.id AS t_id, t.typeoftreatment, t.duration, t.isactive " +
+                "t.id AS t_id, t.typeoftreatment, t.duration, t.price, t.isactive " +
                 "FROM appointment a " +
                 "JOIN customer c ON a.customerid = c.id " +
                 "LEFT JOIN employee e ON a.employeeid = e.id " +
@@ -102,7 +102,7 @@ public class AppointmentRepository {
 
     // Create appointment SQL
     public int createAppointment(Appointment appointment) throws SQLException {
-        String sql = "Insert into appointment (customerid, employeeid,treatmentid,startdate,enddate) values (?,?,?,?,?)";
+        String sql = "Insert into appointment (customerid, employeeid,treatmentid, appstatus, startdate,enddate) values (?,?,?,?,?,?)";
 
         try (Connection c = db.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -110,10 +110,10 @@ public class AppointmentRepository {
             ps.setInt(1, appointment.getCustomer().getId());
             ps.setInt(2, appointment.getEmployee().getId());
             ps.setInt(3, appointment.getTreatment().getId());
-
+            ps.setBoolean(4, appointment.getAppStatus());
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            ps.setString(4, appointment.getStartDate().format(formatter));
-            ps.setString(5, appointment.getEndDate().format(formatter));
+            ps.setString(5, appointment.getStartDate().format(formatter));
+            ps.setString(6, appointment.getEndDate().format(formatter));
 
             return ps.executeUpdate();
         } catch (SQLException e) {
@@ -215,6 +215,26 @@ public class AppointmentRepository {
     }
 
 
+    public int calculateTotalRevenue() {
+        String sql = "SELECT SUM(t.price) AS total_revenue " +
+                "FROM appointment a " +
+                "JOIN treatment t ON a.treatmentid = t.id " +
+                "WHERE a.appstatus = true AND a.enddate < NOW()";
+
+        try (java.sql.Connection con = db.getConnection();
+             java.sql.PreparedStatement ps = con.prepareStatement(sql);
+             java.sql.ResultSet rs = ps.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt("total_revenue");
+            }
+        } catch (java.sql.SQLException e) {
+            throw new DataAccessException("Kunne ikke beregne den samlede indtjening", e);
+        }
+        return 0;
+    }
+
+
     private Appointment mapRow(ResultSet rs) throws SQLException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -228,6 +248,7 @@ public class AppointmentRepository {
                 rs.getInt("t_id"),
                 rs.getString("typeoftreatment"),
                 rs.getInt("duration"),
+                rs.getInt("price"),
                 rs.getBoolean("isactive")
         );
         Employee employee = null;

@@ -19,8 +19,26 @@ public class TreatmentRepository {
         this.db = db;
     }
 
+    public List<Treatment> findAllTreatments() {
+        String sql = "SELECT id, typeoftreatment, duration, price, isactive FROM treatment";
+        List<Treatment> results = new ArrayList<>();
+
+        try(Connection con = db.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+
+            ResultSet rs = ps.executeQuery()){
+            while (rs.next()){
+                results.add(mapRow(rs));
+            }
+        } catch (SQLException e){
+            throw new DataAccessException("Kunne ikke hente aktive behandlinger", e);
+        }
+        return results;
+    }
+
+
     public List<Treatment> findActiveTreatments() {
-        String sql = "SELECT id, typeoftreatment, duration FROM treatment WHERE is_active = true";
+        String sql = "SELECT id, typeoftreatment, duration, price, isactive FROM treatment WHERE isactive = true";
         List<Treatment> results = new ArrayList<>();
 
         try(Connection con = db.getConnection();
@@ -37,13 +55,14 @@ public class TreatmentRepository {
     }
 
     public void createTreatment(Treatment treatment) {
-        String sql = "INSERT INTO treatment (typeoftreatment, duration) VALUES (?, ?)";
+        String sql = "INSERT INTO treatment (typeoftreatment, duration, price) VALUES (?, ?, ?)";
 
         try(Connection con = db.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)){
 
             ps.setString(1, treatment.getTypeOfTreatment());
             ps.setInt(2, treatment.getDuration());
+            ps.setInt(3, treatment.getPrice());
             ps.executeUpdate();
 
         } catch (SQLException e){
@@ -52,7 +71,7 @@ public class TreatmentRepository {
     }
 
     public void deleteTreatmentSafely(int treatmentId) {
-        String sql = "UPDATE treatment SET is_active = false WHERE id = ?";
+        String sql = "UPDATE treatment SET isactive = false WHERE id = ?";
 
         try(Connection con = db.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)){
@@ -68,9 +87,10 @@ public class TreatmentRepository {
     private Treatment mapRow(ResultSet rs) throws SQLException {
         return new Treatment(
             rs.getInt("id"),
-                rs.getString("Treatment"),
+                rs.getString("typeofTreatment"),
                 rs.getInt("Duration"),
-                rs.getBoolean("is_active")
+                rs.getInt("price"),
+                rs.getBoolean("isactive")
         );
     }
 
