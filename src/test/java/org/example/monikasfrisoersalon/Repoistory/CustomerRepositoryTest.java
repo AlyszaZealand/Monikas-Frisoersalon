@@ -80,7 +80,7 @@ class CustomerRepositoryTest {
         Customer newCustomer = new Customer(0, "Hans", "hans123", 99887766);
         customerRepository.createCustomer(newCustomer);
 
-        List<Customer> allCustomersBefore = customerRepository.findAllCustomers();
+        List<Customer> allCustomersBefore = customerRepository.findAllCustomers(); // Hent alle kunder før anonymisering for at finde ID'et på "Hans"
         int hansId = -1;
 
         for (Customer customer : allCustomersBefore) {
@@ -90,8 +90,8 @@ class CustomerRepositoryTest {
             }
         }
 
-        assertTrue(hansId != -1, "Dummy-kunden 'Hans' blev ikke fundet i databasen");
-        customerRepository.anonymizeCustomer(hansId);
+        assertTrue(hansId != -1, "Test-kunden 'Hans' blev ikke fundet i databasen");
+        customerRepository.anonymizeCustomer(hansId); // Anonymiser kunden med det fundne ID
 
         List<Customer> allCustomersAfter = customerRepository.findAllCustomers();
         Customer anonymizedCustomer = null;

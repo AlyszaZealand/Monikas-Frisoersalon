@@ -112,7 +112,7 @@ class EmployeeRepositoryTest {
     @Test
     void testDeleteEmployeeSafely() throws Exception {
         Employee testEmployee = new Employee(0, "Jens", "jens123", 11223344);
-        employeeRepo.createEmployee(testEmployee);
+        employeeRepo.createEmployee(testEmployee); // Opret en testmedarbejder, som vi senere vil slette
 
         // Find Jens' ID
         int jensId = -1;
@@ -126,7 +126,7 @@ class EmployeeRepositoryTest {
 
         // Find en aftale uden tildelt medarbejder
         int unassignedAppId = -1;
-        String findAppSql = "SELECT id FROM appointment WHERE employeeid IS NULL LIMIT 1";
+        String findAppSql = "SELECT id FROM appointment WHERE employeeid IS NULL LIMIT 1"; // Vi antager, at der er mindst én aftale uden tildelt medarbejder i testdatabasen
         try (java.sql.Connection con = db.getConnection();
              java.sql.PreparedStatement ps = con.prepareStatement(findAppSql);
              java.sql.ResultSet rs = ps.executeQuery()) {
@@ -137,7 +137,7 @@ class EmployeeRepositoryTest {
         assertTrue(unassignedAppId != -1, "Kunne ikke finde en ufordelt aftale at bruge til testen");
 
         // Tildel Jens til den ufordelte aftale
-        String assignSql = "UPDATE appointment SET employeeid = ? WHERE id = ?";
+        String assignSql = "UPDATE appointment SET employeeid = ? WHERE id = ?"; // Tildel Jens til den ufordelte aftale for at teste, om deleteEmployeeSafely fjerner denne tilknytning
         try (java.sql.Connection con = db.getConnection();
              java.sql.PreparedStatement ps = con.prepareStatement(assignSql)) {
             ps.setInt(1, jensId);

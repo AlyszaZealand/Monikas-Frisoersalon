@@ -25,15 +25,15 @@ public class AppointmentRepository {
     }
 
     public List<Appointment> findAppointmentsByEmployee(int employeeId) {
-        String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " +
-                "c.id AS c_id, c.username AS c_username, c.phonenumber AS c_phone, " +
-                "e.id AS e_id, e.username AS e_username, e.phonenumber AS e_phone, " +
-                "t.id AS t_id, t.typeoftreatment, t.duration, t.price, t.isactive " +
-                "FROM appointment a " +
-                "JOIN customer c ON a.customerid = c.id " +
-                "JOIN employee e ON a.employeeid = e.id " +
-                "JOIN treatment t ON a.treatmentid = t.id " +
-                "WHERE a.employeeid = ?";
+        String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " + // Tilføj startdate og enddate i SELECT for at kunne mappe dem korrekt
+                "c.id AS c_id, c.username AS c_username, c.phonenumber AS c_phone, " + // Tilføj customer-felter
+                "e.id AS e_id, e.username AS e_username, e.phonenumber AS e_phone, " + // Tilføj employee-felter (selvom de kan være NULL, skal de med i SELECT for at kunne mappe korrekt)
+                "t.id AS t_id, t.typeoftreatment, t.duration, t.price, t.isactive " + // Tilføj treatment-felter
+                "FROM appointment a " + // Start fra appointment-tabellen
+                "JOIN customer c ON a.customerid = c.id " + // Join med customer for at få kundedata
+                "JOIN employee e ON a.employeeid = e.id " + // Join med employee for at få medarbejderdata (vil være NULL
+                "JOIN treatment t ON a.treatmentid = t.id " + // Join med treatment for at få behandlingsdata
+                "WHERE a.employeeid = ?"; // Filtrer for kun at få aftaler for den specifikke medarbejder
 
         List<Appointment> results = new ArrayList<>();
         try (Connection con = db.getConnection();
@@ -51,14 +51,14 @@ public class AppointmentRepository {
     }
 
     public List<Appointment> findAllAppointments() {
-        String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " +
-                "c.id AS c_id, c.username AS c_username, c.phonenumber AS c_phone, " +
-                "e.id AS e_id, e.username AS e_username, e.phonenumber AS e_phone, " +
-                "t.id AS t_id, t.typeoftreatment, t.duration, t.price, t.isactive " +
-                "FROM appointment a " +
-                "JOIN customer c ON a.customerid = c.id " +
-                "LEFT JOIN employee e ON a.employeeid = e.id " +
-                "JOIN treatment t ON a.treatmentid = t.id";
+        String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " + // Tilføj startdate og enddate i SELECT for at kunne mappe dem korrekt
+                "c.id AS c_id, c.username AS c_username, c.phonenumber AS c_phone, " + // Tilføj customer-felter
+                "e.id AS e_id, e.username AS e_username, e.phonenumber AS e_phone, " + // Tilføj employee-felter (selvom de kan være NULL, skal de med i SELECT for at kunne mappe korrekt)
+                "t.id AS t_id, t.typeoftreatment, t.duration, t.price, t.isactive " + // Tilføj treatment-felter
+                "FROM appointment a " + // Start fra appointment-tabellen
+                "JOIN customer c ON a.customerid = c.id " + // Join med customer for at få kundedata
+                "LEFT JOIN employee e ON a.employeeid = e.id " + // Left join med employee for at få medarbejderdata (vil være NULL
+                "JOIN treatment t ON a.treatmentid = t.id"; // Join med treatment for at få behandlingsdata
 
         List<Appointment> results = new ArrayList<>();
         try(Connection con = db.getConnection();
@@ -75,15 +75,15 @@ public class AppointmentRepository {
     }
 
     public List<Appointment> findUnassignedAppointments() {
-        String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " +
-                "c.id AS c_id, c.username AS c_username, c.phonenumber AS c_phone, " +
-                "e.id AS e_id, e.username AS e_username, e.phonenumber AS e_phone, " +
-                "t.id AS t_id, t.typeoftreatment, t.duration, t.price, t.isactive " +
-                "FROM appointment a " +
-                "JOIN customer c ON a.customerid = c.id " +
-                "LEFT JOIN employee e ON a.employeeid = e.id " +
-                "JOIN treatment t ON a.treatmentid = t.id " +
-                "WHERE a.employeeid IS NULL";
+        String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " + // Tilføj startdate og enddate i SELECT for at kunne mappe dem korrekt
+                "c.id AS c_id, c.username AS c_username, c.phonenumber AS c_phone, " + // Tilføj customer-felter
+                "e.id AS e_id, e.username AS e_username, e.phonenumber AS e_phone, " + // Tilføj employee-felter (selvom de vil være NULL for unassigned, skal de med i SELECT for at kunne mappe korrekt)
+                "t.id AS t_id, t.typeoftreatment, t.duration, t.price, t.isactive " + // Tilføj treatment-felter
+                "FROM appointment a " + // Start fra appointment-tabellen
+                "JOIN customer c ON a.customerid = c.id " + // Join med customer for at få kundedata
+                "LEFT JOIN employee e ON a.employeeid = e.id " + // Left join med employee for at få medarbejderdata (vil være NULL for unassigned)
+                "JOIN treatment t ON a.treatmentid = t.id " + // Join med treatment for at få behandlingsdata
+                "WHERE a.employeeid IS NULL"; // Filtrer for kun at få unassigned aftaler
 
         List<Appointment> results = new ArrayList<>();
         try(Connection con = db.getConnection();
@@ -123,7 +123,7 @@ public class AppointmentRepository {
 
 
     public void reassignAppointment(int appointmentId, int newEmployeeId) {
-        String sql = "UPDATE appointment SET employeeid = ? WHERE id = ?";
+        String sql = "UPDATE appointment SET employeeid = ? WHERE id = ?"; // Opdater SQL for at ændre employeeid for en given appointment
         try(Connection con = db.getConnection();
             PreparedStatement ps = con.prepareStatement(sql)){
             ps.setInt(1, newEmployeeId);
@@ -170,7 +170,7 @@ public class AppointmentRepository {
 
 
     public int deleteAppointmentsOlderThan(LocalDateTime cutoffDate) {
-        String sql = "DELETE FROM appointment WHERE enddate < ?";
+        String sql = "DELETE FROM appointment WHERE enddate < ?"; // Slet alle aftaler, hvor enddate er før cutoffDate
 
         try (Connection con = db.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -188,11 +188,11 @@ public class AppointmentRepository {
 
 
     public boolean checkForConflict(Appointment newAppointment) {
-        String sql = "SELECT COUNT(*) FROM appointment " +
-                "WHERE employeeid = ? " +
-                "AND appstatus = true " +
-                "AND startdate < ? AND enddate > ? " +
-                "AND id != ?";
+        String sql = "SELECT COUNT(*) FROM appointment " + // Tjek for overlapende aftaler for samme medarbejder
+                "WHERE employeeid = ? " + // Tjek for samme medarbejder
+                "AND appstatus = true " + // Tjek kun aktive aftaler
+                "AND startdate < ? AND enddate > ? " + // Tjek for overlap (startdate før ny aftales enddate OG enddate efter ny aftales startdate)
+                "AND id != ?"; // Udeluk den aftale, der opdateres (hvis det er en opdatering og ikke en ny aftale)
 
         try(Connection c = db.getConnection();
             PreparedStatement ps = c.prepareStatement(sql)){
@@ -216,10 +216,10 @@ public class AppointmentRepository {
 
 
     public int calculateTotalRevenue() {
-        String sql = "SELECT SUM(t.price) AS total_revenue " +
-                "FROM appointment a " +
-                "JOIN treatment t ON a.treatmentid = t.id " +
-                "WHERE a.appstatus = true AND a.enddate < NOW()";
+        String sql = "SELECT SUM(t.price) AS total_revenue " + // Beregn den samlede indtjening ved at summere prisen for alle behandlinger i afsluttede aftaler
+                "FROM appointment a " + // Start fra appointment-tabellen
+                "JOIN treatment t ON a.treatmentid = t.id " + // Join med treatment for at få prisen på hver behandling
+                "WHERE a.appstatus = true AND a.enddate < NOW()"; // Filtrer for kun at inkludere afsluttede aftaler (appstatus = true og enddate før nu)
 
         try (java.sql.Connection con = db.getConnection();
              java.sql.PreparedStatement ps = con.prepareStatement(sql);

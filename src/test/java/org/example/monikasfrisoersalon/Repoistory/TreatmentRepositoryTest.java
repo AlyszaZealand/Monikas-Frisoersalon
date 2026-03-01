@@ -83,7 +83,7 @@ class TreatmentRepositoryTest {
         int treatmentId = 1;
 
         try {
-            treatmentRepo.deleteTreatmentSafely(treatmentId);
+            treatmentRepo.deleteTreatmentSafely(treatmentId); // Sæt behandling med ID 1 til inaktiv
 
             List<Treatment> activeTreatments = treatmentRepo.findActiveTreatments();
             boolean foundInActive = false;
@@ -108,7 +108,7 @@ class TreatmentRepositoryTest {
             }
             assertTrue(foundInAll, "Behandlingen med ID 1 SKAL stadig findes i findAllTreatments");
 
-        } finally {
+        } finally { // Sæt behandling med ID 1 tilbage til aktiv for at undgå sideeffekter på andre tests
             String sql = "UPDATE treatment SET isactive = true WHERE id = ?";
             try (java.sql.Connection con = db.getConnection();
                  java.sql.PreparedStatement ps = con.prepareStatement(sql)) {

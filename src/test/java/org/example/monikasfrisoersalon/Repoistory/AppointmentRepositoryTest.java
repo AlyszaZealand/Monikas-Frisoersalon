@@ -147,8 +147,8 @@ class AppointmentRepositoryTest {
         assertEquals(originalEmployeeId, appBefore.getEmployee().getId(), "Aftalen skal starte med at tilhøre ID 1");
         assertEquals("brian", appBefore.getEmployee().getUsername(), "Aftalen skal starte med at tilhøre 'brian'");
 
-        appointmentRepo.reassignAppointment(testAppointmentId, newEmployeeId);
-        List<Appointment> allAppointments = appointmentRepo.findAllAppointments();
+        appointmentRepo.reassignAppointment(testAppointmentId, newEmployeeId); // Reassign aftale 1 til medarbejder 2 (mette)
+        List<Appointment> allAppointments = appointmentRepo.findAllAppointments(); // Hent alle aftaler igen for at tjekke opdateringen
         Appointment updatedAppointment = null;
 
         for (Appointment app : allAppointments) {
@@ -176,10 +176,10 @@ class AppointmentRepositoryTest {
         int testAppointmentId = unassignedApp.getId();
         int nyEmployeeId = 2;
 
-        boolean missingEmployee = (unassignedApp.getEmployee() == null || unassignedApp.getEmployee().getId() == 0);
+        boolean missingEmployee = (unassignedApp.getEmployee() == null || unassignedApp.getEmployee().getId() == 0); // Tjek at aftalen starter som ufordelt (uden medarbejder)
         assertTrue(missingEmployee, "Aftalen skal starte med at være ufordelt (NULL)");
 
-        appointmentRepo.reassignAppointment(testAppointmentId, nyEmployeeId);
+        appointmentRepo.reassignAppointment(testAppointmentId, nyEmployeeId); // Tildel den ufordelte aftale til medarbejder 2 (mette)
 
         List<Appointment> allAppAfter = appointmentRepo.findAllAppointments();
         Appointment updatedApp = null;
@@ -217,19 +217,19 @@ class AppointmentRepositoryTest {
         }
         assertNotNull(appointmentForUpdate, "Aftale 1 skal findes i databasen for at testen kan køre");
 
-        LocalDateTime originalStart = appointmentForUpdate.getStartDate();
-        LocalDateTime originalEnd = appointmentForUpdate.getEndDate();
-        Treatment originalTreatment = appointmentForUpdate.getTreatment();
+        LocalDateTime originalStart = appointmentForUpdate.getStartDate(); // Gem original startdato for at kunne rydde op efter testen
+        LocalDateTime originalEnd = appointmentForUpdate.getEndDate(); // Gem original slutdato for at kunne rydde op efter testen
+        Treatment originalTreatment = appointmentForUpdate.getTreatment(); // Gem original behandling for at kunne rydde op efter testen
 
 
         LocalDateTime newStart = LocalDateTime.of(2027, 5, 10, 14, 0);
         LocalDateTime newEnd = LocalDateTime.of(2027, 5, 10, 14, 45);
         Treatment newTreatment = new Treatment(2, "BuzzCut", 30, 150,true);
 
-        appointmentForUpdate.setStartDate(newStart);
-        appointmentForUpdate.setEndDate(newEnd);
-        appointmentForUpdate.setTreatment(newTreatment);
-        appointmentRepo.updateAppointment(appointmentForUpdate);
+        appointmentForUpdate.setStartDate(newStart); // Opdater startdatoen for aftalen
+        appointmentForUpdate.setEndDate(newEnd); // Opdater slutdatoen for aftalen
+        appointmentForUpdate.setTreatment(newTreatment); // Opdater behandlingen for aftalen
+        appointmentRepo.updateAppointment(appointmentForUpdate); // Gem ændringerne i databasen
 
         List<Appointment> appointmentAfterUpdate = appointmentRepo.findAllAppointments();
         Appointment updatedAppointment = null;
@@ -303,10 +303,10 @@ class AppointmentRepositoryTest {
         LocalDateTime oldEndDate = LocalDateTime.of(2020, 1, 1, 10, 30);
         Appointment oldAppointment = new Appointment(0, testCustomer, testEmployee, testTreatment, true, oldStartDate, oldEndDate);
 
-        appointmentRepo.createAppointment(oldAppointment);
-        LocalDateTime cutoffDate = LocalDateTime.of(2022, 1, 1, 0, 0);
+        appointmentRepo.createAppointment(oldAppointment); // Opret en gammel aftale fra 2020, som burde blive slettet af deleteAppointmentsOlderThan
+        LocalDateTime cutoffDate = LocalDateTime.of(2022, 1, 1, 0, 0); // Definer cutoff-datoen til 1. januar 2022
 
-        int deletedRows = appointmentRepo.deleteAppointmentsOlderThan(cutoffDate);
+        int deletedRows = appointmentRepo.deleteAppointmentsOlderThan(cutoffDate); // Slet alle aftaler der starter før 1. januar 2022
         assertTrue(deletedRows >= 1, "Der skulle have været mindst én aftale, der blev slettet (den fra 2020)");
 
         List<Appointment> allAppointments = appointmentRepo.findAllAppointments();
@@ -340,10 +340,10 @@ class AppointmentRepositoryTest {
         List<Appointment> allAppointments = appointmentRepo.findAllAppointments();
         assertFalse(allAppointments.isEmpty(), "Der skal være mindst én aftale i databasen for at køre testen");
 
-        Appointment existingApp = allAppointments.get(0);
-        Employee busyEmployee = existingApp.getEmployee();
-        LocalDateTime existingStart = existingApp.getStartDate();
-        LocalDateTime existingEnd = existingApp.getEndDate();
+        Appointment existingApp = allAppointments.get(0); // Tag den første aftale fra databasen (formentlig den med ID 1 fra SchemaSeed)
+        Employee busyEmployee = existingApp.getEmployee(); // Den medarbejder der allerede har en aftale i databasen
+        LocalDateTime existingStart = existingApp.getStartDate(); // Start- og slutdatoen for den eksisterende aftale, som vi vil teste konflikter imod
+        LocalDateTime existingEnd = existingApp.getEndDate(); // Start- og slutdatoen for den eksisterende aftale, som vi vil teste konflikter imod
 
         Customer testCustomer = new Customer(1, "klaus", "", 12345678);
         Treatment testTreatment = new Treatment(1, "Wash", 30, 150,true);

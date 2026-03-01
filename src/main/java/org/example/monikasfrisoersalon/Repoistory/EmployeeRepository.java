@@ -59,8 +59,8 @@ public class EmployeeRepository {
 
 
     public void deleteEmployeeSafely(int employeeId) {
-        String removeAssignedSql = "UPDATE appointment SET employeeid = NULL WHERE employeeid = ?";
-        String deleteEmployeeSql = "DELETE FROM employee WHERE id = ?";
+        String removeAssignedSql = "UPDATE appointment SET employeeid = NULL WHERE employeeid = ?"; // Fjern tilknytningen til medarbejderen i appointment-tabellen
+        String deleteEmployeeSql = "DELETE FROM employee WHERE id = ?"; // Slet medarbejderen
 
         try(Connection con = db.getConnection()){
             PreparedStatement ps1 = con.prepareStatement(removeAssignedSql);
