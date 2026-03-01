@@ -1,7 +1,7 @@
 package org.example.monikasfrisoersalon.Service;
 
 import org.example.monikasfrisoersalon.Model.Administrator;
-import org.example.monikasfrisoersalon.Repoistory.AdministratorRepository;
+import org.example.monikasfrisoersalon.Repository.AdministratorRepository;
 
 import java.util.List;
 

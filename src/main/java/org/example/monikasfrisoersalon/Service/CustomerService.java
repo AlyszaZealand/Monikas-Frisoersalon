@@ -1,7 +1,7 @@
 package org.example.monikasfrisoersalon.Service;
 
 import org.example.monikasfrisoersalon.Model.Customer;
-import org.example.monikasfrisoersalon.Repoistory.CustomerRepository;
+import org.example.monikasfrisoersalon.Repository.CustomerRepository;
 
 import java.util.List;
 
@@ -15,8 +15,8 @@ public class CustomerService {
     }
 
     public void createCustomer(Customer customer) {
-        String phoneStr = String.valueOf(customer.getPhoneNumber());
-        if (phoneStr.length() != 8) {
+        String phoneNumber = String.valueOf(customer.getPhoneNumber());
+        if (phoneNumber.length() != 8) {
             throw new IllegalArgumentException("Fejl: Kundens telefonnummer skal være præcis 8 cifre.");
         }
 
@@ -24,8 +24,8 @@ public class CustomerService {
             throw new IllegalArgumentException("Fejl: Kunden skal have et navn.");
         }
 
-        if (customer.getPassword() == null || customer.getPassword().length() < 4) {
-            throw new IllegalArgumentException("Fejl: Adgangskoden skal være på mindst 4 tegn.");
+        if (customer.getPassword() == null || !customer.getPassword().equals("")) {
+            throw new IllegalArgumentException("Fejl: Password skal være blankt (\"\").");
         }
 
         customerRepo.createCustomer(customer);

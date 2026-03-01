@@ -1,4 +1,4 @@
-package org.example.monikasfrisoersalon.Repoistory;
+package org.example.monikasfrisoersalon.Repository;
 
 import org.example.monikasfrisoersalon.Database.DB;
 import org.example.monikasfrisoersalon.Model.Employee;

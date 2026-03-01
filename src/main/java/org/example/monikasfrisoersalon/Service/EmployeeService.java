@@ -1,7 +1,7 @@
 package org.example.monikasfrisoersalon.Service;
 
 import org.example.monikasfrisoersalon.Model.Employee;
-import org.example.monikasfrisoersalon.Repoistory.EmployeeRepository;
+import org.example.monikasfrisoersalon.Repository.EmployeeRepository;
 
 import java.util.List;
 
@@ -14,8 +14,8 @@ public class EmployeeService {
     }
 
     public void createEmployee(Employee employee) {
-        String phoneStr = String.valueOf(employee.getPhoneNumber());
-        if (phoneStr.length() != 8) {
+        String phoneNumber = String.valueOf(employee.getPhoneNumber());
+        if (phoneNumber.length() != 8) {
             throw new IllegalArgumentException("Fejl: Telefonnummeret skal være præcis 8 cifre.");
         }
         if (employee.getPassword() == null || employee.getPassword().length() < 4) {

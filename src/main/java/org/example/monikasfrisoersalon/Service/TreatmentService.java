@@ -1,7 +1,7 @@
 package org.example.monikasfrisoersalon.Service;
 
 import org.example.monikasfrisoersalon.Model.Treatment;
-import org.example.monikasfrisoersalon.Repoistory.TreatmentRepository;
+import org.example.monikasfrisoersalon.Repository.TreatmentRepository;
 
 import java.util.List;
 
@@ -14,7 +14,6 @@ public class TreatmentService {
     }
 
     public void createTreatment(Treatment treatment) {
-        // Business Logic: Validering før vi lader databasen røre ved det
         if (treatment.getDuration() <= 0) {
             throw new IllegalArgumentException("Fejl: En behandling skal tage mere end 0 minutter.");
         }

@@ -1,7 +1,7 @@
 package org.example.monikasfrisoersalon.Service;
 
 import org.example.monikasfrisoersalon.Model.Appointment;
-import org.example.monikasfrisoersalon.Repoistory.AppointmentRepository;
+import org.example.monikasfrisoersalon.Repository.AppointmentRepository;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -17,11 +17,13 @@ public class AppointmentService {
     }
 
     public void createAppointment(Appointment appointment) {
+        // Validering: Starttidspunkt skal være før sluttidspunkt
         if (appointment.getStartDate().isAfter(appointment.getEndDate()) ||
                 appointment.getStartDate().isEqual(appointment.getEndDate())) {
             throw new IllegalArgumentException("Fejl: Sluttidspunktet skal være efter starttidspunktet.");
         }
 
+        // Validering: Tjek for overlap med eksisterende aftaler for samme medarbejder
         boolean hasConflict = appointmentRepo.checkForConflict(appointment);
         if (hasConflict) {
             throw new IllegalStateException("Fejl: Medarbejderen er allerede booket i dette tidsrum.");
@@ -45,9 +47,12 @@ public class AppointmentService {
 
 
     public void updateAppointment(Appointment appointment) {
+        // Validering: Starttidspunkt skal være før sluttidspunkt
         if (appointment.getStartDate().isAfter(appointment.getEndDate())) {
             throw new IllegalArgumentException("Fejl: Sluttidspunktet skal være efter starttidspunktet.");
         }
+
+        // Validering: Tjek for overlap med eksisterende aftaler for samme medarbejder (undtagen den aktuelle aftale)
         if (appointmentRepo.checkForConflict(appointment)) {
             throw new IllegalStateException("Fejl: Den opdaterede tid skaber en konflikt for medarbejderen.");
         }
