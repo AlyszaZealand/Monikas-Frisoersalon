@@ -343,14 +343,17 @@ class AppointmentRepositoryTest {
         List<Appointment> allAppointments = appointmentRepo.findAllAppointments();
         assertFalse(allAppointments.isEmpty(), "Der skal være mindst én aftale i databasen for at køre testen");
 
+        // Vi tager den første aftale fra databasen (formentlig den med ID 1 fra SchemaSeed) og bruger dens data til at teste konfliktscenarier
         Appointment existingApp = allAppointments.get(0); // Tag den første aftale fra databasen (formentlig den med ID 1 fra SchemaSeed)
         Employee busyEmployee = existingApp.getEmployee(); // Den medarbejder der allerede har en aftale i databasen
         LocalDateTime existingStart = existingApp.getStartDate(); // Start- og slutdatoen for den eksisterende aftale, som vi vil teste konflikter imod
         LocalDateTime existingEnd = existingApp.getEndDate(); // Start- og slutdatoen for den eksisterende aftale, som vi vil teste konflikter imod
 
+        // Opret testdata til de tre scenarier
         Customer testCustomer = new Customer(1, "klaus", "", 12345678);
         Treatment testTreatment = new Treatment(1, "Wash", 30, 150,true);
 
+        // Vi skal også bruge en anden medarbejder for at teste scenarie C, hvor aftalen
         int otherEmployeeId = (busyEmployee.getId() == 1) ? 2 : 1;
         Employee freeEmployee = new Employee(otherEmployeeId, "other", "", 12345678);
 
@@ -389,6 +392,7 @@ class AppointmentRepositoryTest {
         Employee testEmployee = new Employee(1, "DummyFrisør", "pass", 12345678);
         Treatment testTreatment = new Treatment(1, "Wash & brush", 30, 150, true);
 
+        // Opret en FULDFØRT tid i 2018 (appstatus = true).
         Appointment pastCompletedApp = new Appointment(0, testCustomer, testEmployee, testTreatment, true,
                 LocalDateTime.of(2018, 5, 10, 10, 0),
                 LocalDateTime.of(2018, 5, 10, 10, 30));

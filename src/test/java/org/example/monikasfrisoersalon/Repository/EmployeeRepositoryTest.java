@@ -77,6 +77,7 @@ class EmployeeRepositoryTest {
 
     @Test
     void testUpdatePassword() {
+        // Opret en testmedarbejder, som vi senere vil opdatere
         Employee testEmployee = new Employee(0, "Jens", "gammeltKodeord", 11223344);
         employeeRepo.createEmployee(testEmployee);
 
@@ -89,9 +90,10 @@ class EmployeeRepositoryTest {
                 break;
             }
         }
-
+        // Sørg for at vi har fundet Jens' ID
         assertTrue(jensId != -1, "Kunne ikke finde den oprettede medarbejder 'Jens' i databasen");
         String newPassword = "nytKodeord123";
+        // Opdater Jens' kodeord
         employeeRepo.updatePassword(jensId, newPassword);
 
         List<Employee> employeesAfter = employeeRepo.findEmployees();

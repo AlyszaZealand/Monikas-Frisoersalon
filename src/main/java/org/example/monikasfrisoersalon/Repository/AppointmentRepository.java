@@ -88,7 +88,6 @@ public class AppointmentRepository {
         List<Appointment> results = new ArrayList<>();
         try(Connection con = db.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
-
             ResultSet rs = ps.executeQuery()){
             while (rs.next()){
                 results.add(mapRow(rs));
