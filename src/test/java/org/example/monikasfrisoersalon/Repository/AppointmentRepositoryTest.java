@@ -257,6 +257,7 @@ class AppointmentRepositoryTest {
     void testCancelAppointment() {
         int testAppointmentId = 1;
 
+        // Først tjekker vi at aftalen starter som aktiv (appstatus = true)
         List<Appointment> allAppointments = appointmentRepo.findAllAppointments();
         Appointment appointmentToCancel = null;
         for (Appointment app : allAppointments) {
@@ -267,9 +268,11 @@ class AppointmentRepositoryTest {
         }
         assertNotNull(appointmentToCancel, "Aftalen skal findes i databasen for at testen kan køre");
         assertTrue(appointmentToCancel.getAppStatus(), "Aftalen skal starte med at være aktiv (appstatus = true)");
+
+        // Nu aflyser vi aftalen
         appointmentRepo.cancelAppointment(testAppointmentId);
 
-
+        // Tjek at aftalen stadig findes i databasen og at appstatus nu er false
         List<Appointment> appointmentsAfter = appointmentRepo.findAllAppointments();
         Appointment cancelledAppointment = null;
         for (Appointment app : appointmentsAfter) {
