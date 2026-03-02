@@ -56,9 +56,8 @@ class AppointmentRepositoryTest {
             assertEquals(1, firstAssignment.getEmployee().getId(), "Frisørens ID skal være 1");
             assertEquals("brian", firstAssignment.getEmployee().getUsername(), "Frisørens navn skal være 'brian'");
         }
-
-
     }
+
 
     @Test
     void testFindAllAppointments() {

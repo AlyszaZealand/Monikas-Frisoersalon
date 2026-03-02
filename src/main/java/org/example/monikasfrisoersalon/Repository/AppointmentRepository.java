@@ -24,6 +24,7 @@ public class AppointmentRepository {
         this.db = db;
     }
 
+
     public List<Appointment> findAppointmentsByEmployee(int employeeId) {
         String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " + // Tilføj startdate og enddate i SELECT for at kunne mappe dem korrekt
                 "c.id AS c_id, c.username AS c_username, c.phonenumber AS c_phone, " + // Tilføj customer-felter
@@ -49,6 +50,7 @@ public class AppointmentRepository {
         }
         return results;
     }
+
 
     public List<Appointment> findAllAppointments() {
         String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " + // Tilføj startdate og enddate i SELECT for at kunne mappe dem korrekt
