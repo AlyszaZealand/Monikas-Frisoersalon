@@ -24,7 +24,11 @@ public class AppointmentService {
 
     // Cancel appointment
     public void handleCancelAppointment(int appointmentID) {
-        appointmentRepository.cancelAppointment(appointmentID);
+        try {
+            appointmentRepository.cancelAppointment(appointmentID);
+        } catch (SQLException e) {
+            //Custom exception?
+        }
     }
 
     // Update appointment

@@ -25,6 +25,15 @@ public class AppointmentRepository {
     }
 
     // Find all appointments
+//    String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " + // Tilføj startdate og enddate i SELECT for at kunne mappe dem korrekt
+//            "c.id AS c_id, c.username AS c_username, c.phonenumber AS c_phone, " + // Tilføj customer-felter
+//            "e.id AS e_id, e.username AS e_username, e.phonenumber AS e_phone, " + // Tilføj employee-felter (selvom de kan være NULL, skal de med i SELECT for at kunne mappe korrekt)
+//            "t.id AS t_id, t.typeoftreatment, t.duration, t.price, t.isactive " + // Tilføj treatment-felter
+//            "FROM appointment a " + // Start fra appointment-tabellen
+//            "JOIN customer c ON a.customerid = c.id " + // Join med customer for at få kundedata
+//            "JOIN employee e ON a.employeeid = e.id " + // Join med employee for at få medarbejderdata (vil være NULL
+//            "JOIN treatment t ON a.treatmentid = t.id " + // Join med treatment for at få behandlingsdata
+//            "WHERE a.employeeid = ?"
     public List<Appointment> findAll() {
         String sql = "Select employee, customer, treatment, From appointment order by employee";
 
@@ -71,6 +80,7 @@ public class AppointmentRepository {
             ps.setString(1, appointment.getStartdate().toString());
             ps.setString(2, appointment.getEndDate().toString());
             ps.setString(3, appointment.getTreatment().toString());
+            ps.executeUpdate();
         }catch (SQLException e){
             //måske en custom exception
         }
@@ -78,7 +88,14 @@ public class AppointmentRepository {
 
     // Cancel appointment SQL
     public void cancelAppointment(int id) throws SQLException {
-        String sql = "";
+        String sql = "Update appointment set appstatus = false where id = ?";
+
+        try(Connection conn = db.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)){
+
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        }
     }
 
     // Check appointment conflict SQL skal nok rykkes til SERVICE??
