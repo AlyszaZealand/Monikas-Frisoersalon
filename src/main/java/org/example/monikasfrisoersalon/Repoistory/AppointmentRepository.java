@@ -26,7 +26,14 @@ public class AppointmentRepository {
 
     // Find all appointments
     public List<Appointment> findAll() {
-        String sql = "Select employee, customer, treatment, From appointment order by employee";
+        String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " + // Tilføj startdate og enddate i SELECT for at kunne mappe dem korrekt
+                "c.id AS c_id, c.username AS c_username, c.phonenumber AS c_phone, " + // Tilføj customer-felter
+                "e.id AS e_id, e.username AS e_username, e.phonenumber AS e_phone, " + // Tilføj employee-felter (selvom de kan være NULL, skal de med i SELECT for at kunne mappe korrekt)
+                "t.id AS t_id, t.typeoftreatment, t.duration, t.price, t.isactive " + // Tilføj treatment-felter
+                "FROM appointment a " + // Start fra appointment-tabellen
+                "JOIN customer c ON a.customerid = c.id " + // Join med customer for at få kundedata
+                "LEFT JOIN employee e ON a.employeeid = e.id " + // Left join med employee for at få medarbejderdata (vil være NULL
+                "JOIN treatment t ON a.treatmentid = t.id"; // Join med treatment for at få behandlingsdata
 
         List<Appointment> results = new ArrayList<>();
 
@@ -102,34 +109,39 @@ public class AppointmentRepository {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
-
         Customer customer = new Customer(
-                rs.getInt("id"),
-                rs.getString("username"),
-                rs.getString("password"),
-                rs.getInt("phone number")
-        );
-        Employee employee = new Employee(
-                rs.getInt("id"),
-                rs.getString("username"),
-                rs.getString("password"),
-                rs.getInt("phone number")
+                rs.getInt("c_id"),
+                rs.getString("c_username"),
+                "",
+                rs.getInt("c_phone")
         );
         Treatment treatment = new Treatment(
-                rs.getInt("id"),
-                rs.getString("type oft reatment"),
-                rs.getInt("duration")
+                rs.getInt("t_id"),
+                rs.getString("typeoftreatment"),
+                rs.getInt("duration"),
+                rs.getInt("price"),
+                rs.getBoolean("isactive")
         );
+        Employee employee = null;
+        int empId = rs.getInt("e_id");
+        if (!rs.wasNull()) {
+            employee = new Employee(
+                    empId,
+                    rs.getString("e_username"),
+                    "",
+                    rs.getInt("e_phone"));
+        }
+        String startDateStr = rs.getString("startdate").replace("T", " ");
+        String endDateStr = rs.getString("enddate").replace("T", " ");
+
         return new Appointment(
-                rs.getInt("id"),
+                rs.getInt("app_id"),
                 customer,
                 employee,
                 treatment,
                 rs.getBoolean("appstatus"),
-                LocalDateTime.parse(rs.getString("start date"), formatter),
-                LocalDateTime.parse(rs.getString("end date"))
-
+                LocalDateTime.parse(startDateStr, formatter),
+                LocalDateTime.parse(endDateStr, formatter)
         );
     }
-
 }

@@ -35,71 +35,71 @@ public class LoginController {
     @FXML private Button logoutButton;
 
     // Possible login
-    @FXML public void onLoginButtonClick(ActionEvent event) {
-        String email = emailField.getText();
-        String phoneNumber = phoneNumberField.getText();
-        String password = passwordField.getText();
-
-        // Possible Switch Case
-        try { // Login Employee
-            List<Employee> employees = employeeService.getEmployees();
-            if (employees.isEmpty()) {
-                Employee employee = employees.get(0);
-                SceneSwitch.switchToAppointment();
-                showAlert("Success", "Velkommen Kunde");
-
-            } else if { // Login Customer
-                List<Customer> customers = customerService.getCustomers();
-                if (customers.isEmpty()) {
-                    Customer customer = customers.get(0);
-                    SceneSwitch.switchToAppointment();
-                    showAlert("Success", "Velkommen Medarbejder");
-                }
-
-            } else if { // Login Administrator
-                List<Administrator> administrators = administratorService.getAdministrators();
-                if (administrators.isEmpty()) {
-                    Administrator administrator = administrators.get(0);
-                    SceneSwich.switchToAppointment();
-                    showAlert("Success", "Administrator");
-                }
-
-            } else {
-                showAlert("Login Failed", "No User Found");
-            }
-        } catch (Exception e) {
-            showAlert("Login Failed", "An Error Occurred During Login:");
-        }
-    }
-
-    // For initialize
-    private AdministratorService administratorService;
-    private AppointmentService appointmentService;
-    private CustomerService customerService;
-    private EmployeeService employeeService;
-    private TreatmentService treatmentService;
-
-    // Initialize
-    public void initialize() {
-        DB db = new DB();
-        AdministratorRepository administratorRepo = new AdministratorRepository(db);
-        AppointmentRepository appointmentRepo = new AppointmentRepository(db);
-        CustomerRepository customerRepo = new CustomerRepository(db);
-        EmployeeRepository employeeRepo = new EmployeeRepository(db);
-        TreatmentRepository treatmentRepo = new TreatmentRepository(db);
-        administratorService = new AdministratorService(administratorRepo);
-        appointmentService = new AppointmentService(appointmentRepo);
-        customerService = new CustomerService(customerRepo);
-        employeeService = new EmployeeService(employeeRepo);
-        treatmentService = new TreatmentService(treatmentRepo);
-    }
-
-    // Alerts (Confirmation, Errors etc.)
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
+//    @FXML public void onLoginButtonClick(ActionEvent event) {
+//        String email = emailField.getText();
+//        String phoneNumber = phoneNumberField.getText();
+//        String password = passwordField.getText();
+//
+//        // Possible Switch Case
+//        try { // Login Employee
+//            List<Employee> employees = employeeService.getEmployees();
+//            if (employees.isEmpty()) {
+//                Employee employee = employees.get(0);
+//                SceneSwitch.switchToAppointment();
+//                showAlert("Success", "Velkommen Kunde");
+//
+//            } else if { // Login Customer
+//                List<Customer> customers = customerService.getCustomers();
+//                if (customers.isEmpty()) {
+//                    Customer customer = customers.get(0);
+//                    SceneSwitch.switchToAppointment();
+//                    showAlert("Success", "Velkommen Medarbejder");
+//                }
+//
+//            } else if { // Login Administrator
+//                List<Administrator> administrators = administratorService.getAdministrators();
+//                if (administrators.isEmpty()) {
+//                    Administrator administrator = administrators.get(0);
+//                    SceneSwich.switchToAppointment();
+//                    showAlert("Success", "Administrator");
+//                }
+//
+//            } else {
+//                showAlert("Login Failed", "No User Found");
+//            }
+//        } catch (Exception e) {
+//            showAlert("Login Failed", "An Error Occurred During Login:");
+//        }
+//    }
+//
+//    // For initialize
+//    private AdministratorService administratorService;
+//    private AppointmentService appointmentService;
+//    private CustomerService customerService;
+//    private EmployeeService employeeService;
+//    private TreatmentService treatmentService;
+//
+//    // Initialize
+//    public void initialize() {
+//        DB db = new DB();
+//        AdministratorRepository administratorRepo = new AdministratorRepository(db);
+//        AppointmentRepository appointmentRepo = new AppointmentRepository(db);
+//        CustomerRepository customerRepo = new CustomerRepository(db);
+//        EmployeeRepository employeeRepo = new EmployeeRepository(db);
+//        TreatmentRepository treatmentRepo = new TreatmentRepository(db);
+//        administratorService = new AdministratorService(administratorRepo);
+//        appointmentService = new AppointmentService(appointmentRepo);
+//        customerService = new CustomerService(customerRepo);
+//        employeeService = new EmployeeService(employeeRepo);
+//        treatmentService = new TreatmentService(treatmentRepo);
+//    }
+//
+//    // Alerts (Confirmation, Errors etc.)
+//    private void showAlert(String title, String message) {
+//        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//        alert.setTitle(title);
+//        alert.setHeaderText(null);
+//        alert.setContentText(message);
+//        alert.showAndWait();
+//    }
 }

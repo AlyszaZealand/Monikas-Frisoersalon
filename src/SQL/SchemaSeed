@@ -23,7 +23,9 @@ phonenumber int
 create table treatment (
 id int primary key auto_increment not null,
 typeoftreatment varchar(50) not null,
-duration int
+duration int,
+price int not null,
+isactive boolean default true
 )
 ;
 create table appointment (
@@ -31,7 +33,7 @@ id int primary key auto_increment not null,
 customerid int,
 employeeid int,
 treatmentid int,
-appstatus boolean,
+appstatus boolean default true,
 startdate datetime,
 enddate datetime,
 foreign key (customerid) references customer(id),
@@ -56,15 +58,16 @@ insert into administrator(username, password, phonenumber) values
 ('monika', 'monika123', 11223344)
 ;
 
-insert into treatment(typeoftreatment, duration) values
-('Wash & brush', 30),
-('BuzzCut', 30),
-('Colour', 120),
-('Cut & style(Long)', 120),
-('Cut & style(Medium)', 90),
-('Cut & style(Short)', 60)
+insert into treatment(typeoftreatment, duration, price) values
+('Wash & brush', 30, 150),
+('BuzzCut', 30, 150),
+('Colour', 120, 500),
+('Cut & style(Long)', 120, 500),
+('Cut & style(Medium)', 90, 350),
+('Cut & style(Short)', 60, 250)
 ;
 
 INSERT INTO appointment(customerid, employeeid, treatmentid, appstatus, startdate, enddate)
 VALUES (1, 1, 1, true, '2026-02-27 12:00:00', '2026-02-27 12:30:00');
-
+INSERT INTO appointment(customerid, employeeid, treatmentid, startdate, enddate)
+VALUES (2, NULL, 1, '2026-03-01 10:00:00', '2026-03-01 10:30:00');

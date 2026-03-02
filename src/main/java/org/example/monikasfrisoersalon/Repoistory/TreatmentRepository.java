@@ -76,7 +76,9 @@ public class TreatmentRepository {
         return new Treatment(
             rs.getInt("id"),
                 rs.getString("Treatment"),
-                rs.getInt("Duration")
+                rs.getInt("Duration"),
+                rs.getInt("price"),
+                rs.getBoolean("isactive")
         );
     }
 
