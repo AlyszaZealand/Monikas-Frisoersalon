@@ -24,6 +24,29 @@ public class AppointmentRepository {
         this.db = db;
     }
 
+    public Appointment findById(int appointmentId) {
+        String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " +
+                "c.id AS c_id, c.username AS c_username, c.phonenumber AS c_phone, " +
+                "e.id AS e_id, e.username AS e_username, e.phonenumber AS e_phone, " +
+                "t.id AS t_id, t.typeoftreatment, t.duration, t.price, t.isactive " +
+                "FROM appointment a " +
+                "JOIN customer c ON a.customerid = c.id " +
+                "LEFT JOIN employee e ON a.employeeid = e.id " +
+                "JOIN treatment t ON a.treatmentid = t.id " +
+                "WHERE a.id = ?";
+
+        try (Connection con = db.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, appointmentId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapRow(rs);
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Kunne ikke finde aftale med ID: " + appointmentId, e);
+        }
+        return null;
+    }
 
     public List<Appointment> findAppointmentsByEmployee(int employeeId) {
         String sql = "SELECT a.id AS app_id, a.appstatus, a.startdate, a.enddate, " + // Tilføj startdate og enddate i SELECT for at kunne mappe dem korrekt
@@ -117,8 +140,6 @@ public class AppointmentRepository {
             ps.setString(6, appointment.getEndDate().format(formatter));
 
             return ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new DataAccessException("Fejl ved oprettelse af aftale", e);
         }
     }
 
@@ -136,7 +157,7 @@ public class AppointmentRepository {
     }
 
 
-    public void updateAppointment(Appointment appointment){
+    public void updateAppointment(Appointment appointment) throws SQLException{
         String sql = "UPDATE appointment SET startdate = ?, enddate = ?, treatmentid = ? WHERE id = ?";
 
         try(Connection c = db.getConnection();
@@ -150,8 +171,6 @@ public class AppointmentRepository {
 
             ps.executeUpdate();
 
-        }catch (SQLException e){
-            throw new DataAccessException("Kunne ikke opdatere aftalens tidspunkt eller behandling", e);
         }
     }
 

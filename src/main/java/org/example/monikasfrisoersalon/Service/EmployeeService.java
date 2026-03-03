@@ -18,6 +18,9 @@ public class EmployeeService {
         if (phoneNumber.length() != 8) {
             throw new IllegalArgumentException("Fejl: Telefonnummeret skal være præcis 8 cifre.");
         }
+        if (employee.getUsername() == null || employee.getUsername().trim().isEmpty()) {
+            throw new IllegalArgumentException("Fejl: Employee skal have et navn.");
+        }
         if (employee.getPassword() == null || employee.getPassword().length() < 4) {
             throw new IllegalArgumentException("Fejl: Adgangskoden skal være på mindst 4 tegn.");
         }

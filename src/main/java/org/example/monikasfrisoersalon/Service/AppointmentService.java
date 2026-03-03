@@ -16,7 +16,7 @@ public class AppointmentService {
         this.appointmentRepo = appointmentRepo;
     }
 
-    public void createAppointment(Appointment appointment) {
+    public void validateAppointment(Appointment appointment) {
         // Validering: Starttidspunkt skal være før sluttidspunkt
         if (appointment.getStartDate().isAfter(appointment.getEndDate()) ||
                 appointment.getStartDate().isEqual(appointment.getEndDate())) {
@@ -28,7 +28,10 @@ public class AppointmentService {
         if (hasConflict) {
             throw new IllegalStateException("Fejl: Medarbejderen er allerede booket i dette tidsrum.");
         }
+    }
 
+    public void createAppointment(Appointment appointment) {
+        validateAppointment(appointment);
         try {
             appointmentRepo.createAppointment(appointment);
         } catch (SQLException e) {
@@ -36,29 +39,37 @@ public class AppointmentService {
         }
     }
 
-
-    public List<Appointment> getAllAppointments() {
-        return appointmentRepo.findAllAppointments();
-    }
-
-    public List<Appointment> getAppointmentsForEmployee(int employeeId) {
-        return appointmentRepo.findAppointmentsByEmployee(employeeId);
-    }
-
-
     public void updateAppointment(Appointment appointment) {
-        // Validering: Starttidspunkt skal være før sluttidspunkt
-        if (appointment.getStartDate().isAfter(appointment.getEndDate())) {
-            throw new IllegalArgumentException("Fejl: Sluttidspunktet skal være efter starttidspunktet.");
+        validateAppointment(appointment);
+        try {
+            appointmentRepo.updateAppointment(appointment);
+        } catch (SQLException e) {
+            throw new RuntimeException("Kunne ikke gemme aftalen i databasen", e);
         }
-
-        // Validering: Tjek for overlap med eksisterende aftaler for samme medarbejder (undtagen den aktuelle aftale)
-        if (appointmentRepo.checkForConflict(appointment)) {
-            throw new IllegalStateException("Fejl: Den opdaterede tid skaber en konflikt for medarbejderen.");
-        }
-        appointmentRepo.updateAppointment(appointment);
     }
 
+    public void handleReassignEmployeeToAppointment(int appointmentId, int employeeId) {
+        // Fetch the existing appointment
+        Appointment appointment = appointmentRepo.findById(appointmentId);
+        if (appointment == null) {
+            throw new IllegalArgumentException("Aftalen findes ikke");
+        }
+
+        // Set the new employee so checkForConflict uses the right employee ID
+        appointment.getEmployee().setId(employeeId);
+
+        boolean hasConflict = appointmentRepo.checkForConflict(appointment);
+        if (hasConflict) {
+            throw new IllegalStateException("Medarbejderen er allerede booket i dette tidsrum.");
+        }
+
+        appointmentRepo.reassignAppointment(appointmentId, employeeId);
+    }
+
+
+    public void handleFindUnassignedAppointment(){
+        appointmentRepo.findUnassignedAppointments();
+    }
 
     public void cancelAppointment(int appointmentId) {
         appointmentRepo.cancelAppointment(appointmentId);
@@ -70,7 +81,16 @@ public class AppointmentService {
     }
 
 
-    public int calculateTotalRevenue() {
+    public int getTotalRevenue() {
         return appointmentRepo.calculateTotalRevenue();
     }
+
+    public List<Appointment> getAllAppointments() {
+        return appointmentRepo.findAllAppointments();
+    }
+
+    public List<Appointment> getAppointmentsForEmployee(int employeeId) {
+        return appointmentRepo.findAppointmentsByEmployee(employeeId);
+    }
+
 }

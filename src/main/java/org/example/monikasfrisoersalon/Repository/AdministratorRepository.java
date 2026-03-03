@@ -19,6 +19,7 @@ public class AdministratorRepository {
         this.db = db;
     }
 
+
     // Liste af Administratorer
     public List<Administrator> findAdministrators(){
         String sql = "select id, username, password, phonenumber from administrator";

@@ -15,4 +15,7 @@ public class Employee extends User{
         return "(" + Id + ") Employee: " + username + "Password: " + password + "Phone-Number: " + phoneNumber;
     }
 
+    public void setId(int id){
+        this.Id = id;
+    }
 }
