@@ -2,10 +2,7 @@ package org.example.monikasfrisoersalon.View.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import org.example.monikasfrisoersalon.Model.Administrator;
 import org.example.monikasfrisoersalon.Model.User;
 import org.example.monikasfrisoersalon.Model.Employee;
@@ -14,7 +11,7 @@ import org.example.monikasfrisoersalon.Service.AuthenticatorService;
 public class LoginController {
 
     @FXML private TextField usernameField;
-    @FXML private TextField passwordField;
+    @FXML private PasswordField passwordField;
     @FXML private Button loginButton;
     @FXML private Label username;
     @FXML private Label password;

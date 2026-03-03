@@ -15,7 +15,9 @@ public class MainApplication extends Application {
             Initialize init = new Initialize();
 
             // 2. Load FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource( "/org/example/monikasfrisoersalon/login-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource( "/login-view.fxml"));
+            var url = getClass().getResource("/org/example/monikasfrisoersalon/login-view.fxml");
+            System.out.println("FXML found at: " + url); // null = wrong path
 
             // 3. Inject services BEFORE load() is called
             loader.setControllerFactory(controllerClass -> {
