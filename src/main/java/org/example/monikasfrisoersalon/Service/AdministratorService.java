@@ -1,21 +1,19 @@
 package org.example.monikasfrisoersalon.Service;
 
 import org.example.monikasfrisoersalon.Model.Administrator;
-import org.example.monikasfrisoersalon.Repoistory.AdministratorRepository;
+import org.example.monikasfrisoersalon.Repository.AdministratorRepository;
 
 import java.util.List;
 
 public class AdministratorService {
-    private final AdministratorRepository administratorRepository;
 
-    //
+    private final AdministratorRepository administratorRepo;
+
     public AdministratorService(AdministratorRepository administratorRepo) {
-        this.administratorRepository = administratorRepo;
+        this.administratorRepo = administratorRepo;
     }
 
-    // Get Administrators
-    public List<Administrator> getAdministrators(){
-       return administratorRepository.FindAdministrators();
+    public List<Administrator> getAdministrators() {
+        return administratorRepo.findAdministrators();
     }
-
 }

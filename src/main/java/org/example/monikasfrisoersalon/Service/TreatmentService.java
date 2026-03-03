@@ -1,35 +1,36 @@
 package org.example.monikasfrisoersalon.Service;
 
-import org.example.monikasfrisoersalon.Repoistory.TreatmentRepository;
+import org.example.monikasfrisoersalon.Model.Treatment;
+import org.example.monikasfrisoersalon.Repository.TreatmentRepository;
 
-import java.sql.SQLException;
+import java.util.List;
 
 public class TreatmentService {
-    private final TreatmentRepository treatmentRepository;
 
-    //
+    private final TreatmentRepository treatmentRepo;
+
     public TreatmentService(TreatmentRepository treatmentRepo) {
-        this.treatmentRepository = treatmentRepo;
+        this.treatmentRepo = treatmentRepo;
     }
 
-    // Create treatment
-    public void handleCreateTreatment(String treatment, int duraiton) {
-        try{
-            treatmentRepository.createTreatment(treatment, duraiton);
-        }catch (SQLException e){
-            //custom exception needed maybe???
+    public void createTreatment(Treatment treatment) {
+        if (treatment.getDuration() <= 0) {
+            throw new IllegalArgumentException("Fejl: En behandling skal tage mere end 0 minutter.");
         }
-
+        if (treatment.getPrice() < 0) {
+            throw new IllegalArgumentException("Fejl: Prisen kan ikke være negativ.");
+        }
+        if (treatment.getTypeOfTreatment() == null || treatment.getTypeOfTreatment().trim().isEmpty()) {
+            throw new IllegalArgumentException("Fejl: Behandlingen skal have et navn.");
+        }
+        treatmentRepo.createTreatment(treatment);
     }
 
-    // Delete treatment
-    public void handleDeleteTreatment(int treatmentID) {
-        treatmentRepository.deleteTreatment(treatmentID);
+    public List<Treatment> getActiveTreatments() {
+        return treatmentRepo.findActiveTreatments();
     }
 
-    // Display all treatments
-    public void handleDisplayAllTreatments(int treatmentID) {
-        treatmentRepository.displayAllTreatments(treatmentID);
+    public void removeTreatment(int treatmentId) {
+        treatmentRepo.deleteTreatmentSafely(treatmentId);
     }
-
 }

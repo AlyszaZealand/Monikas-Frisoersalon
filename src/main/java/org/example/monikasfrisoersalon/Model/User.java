@@ -13,7 +13,6 @@ public abstract class User {
         this.Id = id;
         this.phoneNumber = phoneNumber;
     }
-
     public User (String username, String password){
         this.username = username;
         this.password = password;

@@ -1,49 +1,76 @@
 package org.example.monikasfrisoersalon.Service;
 
 import org.example.monikasfrisoersalon.Model.Appointment;
-import org.example.monikasfrisoersalon.Repoistory.AppointmentRepository;
+import org.example.monikasfrisoersalon.Repository.AppointmentRepository;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class AppointmentService {
-    private final AppointmentRepository appointmentRepository;
 
-    //
+    private final AppointmentRepository appointmentRepo;
+
+
     public AppointmentService(AppointmentRepository appointmentRepo) {
-        this.appointmentRepository = appointmentRepo;
+        this.appointmentRepo = appointmentRepo;
     }
 
-    // Create appointment
-    public void handleCreateAppointment(int customerid, int employeeid, int treatmentid, boolean appstatus, String startdate, String enddate) {
-        try{
-            appointmentRepository.createAppointment(customerid, employeeid,treatmentid,appstatus,startdate,enddate);
-        }catch (SQLException e){
-            //Custom exception?
+    public void createAppointment(Appointment appointment) {
+        // Validering: Starttidspunkt skal være før sluttidspunkt
+        if (appointment.getStartDate().isAfter(appointment.getEndDate()) ||
+                appointment.getStartDate().isEqual(appointment.getEndDate())) {
+            throw new IllegalArgumentException("Fejl: Sluttidspunktet skal være efter starttidspunktet.");
         }
-    }
 
-    // Cancel appointment
-    public void handleCancelAppointment(int appointmentID) {
+        // Validering: Tjek for overlap med eksisterende aftaler for samme medarbejder
+        boolean hasConflict = appointmentRepo.checkForConflict(appointment);
+        if (hasConflict) {
+            throw new IllegalStateException("Fejl: Medarbejderen er allerede booket i dette tidsrum.");
+        }
+
         try {
-            appointmentRepository.cancelAppointment(appointmentID);
+            appointmentRepo.createAppointment(appointment);
         } catch (SQLException e) {
-            //Custom exception?
+            throw new RuntimeException("Kunne ikke gemme aftalen i databasen", e);
         }
     }
 
-    // Update appointment
-    public void handleUpdateAppointment(Appointment appointment) {
-        appointmentRepository.updateAppointment(appointment);
+
+    public List<Appointment> getAllAppointments() {
+        return appointmentRepo.findAllAppointments();
     }
 
-    // Check appointment conflicts
-    public void handleCheckConflict(int id, String startdate, String enddate) {
-       try{
-           appointmentRepository.checkConflict(id, startdate, enddate);
-       } catch (SQLException e){
-           //Custom exception
-       }
-
+    public List<Appointment> getAppointmentsForEmployee(int employeeId) {
+        return appointmentRepo.findAppointmentsByEmployee(employeeId);
     }
 
+
+    public void updateAppointment(Appointment appointment) {
+        // Validering: Starttidspunkt skal være før sluttidspunkt
+        if (appointment.getStartDate().isAfter(appointment.getEndDate())) {
+            throw new IllegalArgumentException("Fejl: Sluttidspunktet skal være efter starttidspunktet.");
+        }
+
+        // Validering: Tjek for overlap med eksisterende aftaler for samme medarbejder (undtagen den aktuelle aftale)
+        if (appointmentRepo.checkForConflict(appointment)) {
+            throw new IllegalStateException("Fejl: Den opdaterede tid skaber en konflikt for medarbejderen.");
+        }
+        appointmentRepo.updateAppointment(appointment);
+    }
+
+
+    public void cancelAppointment(int appointmentId) {
+        appointmentRepo.cancelAppointment(appointmentId);
+    }
+
+
+    public void cleanupOldAppointments(LocalDateTime cutoffDate) {
+        appointmentRepo.deleteAppointmentsOlderThan(cutoffDate);
+    }
+
+
+    public int calculateTotalRevenue() {
+        return appointmentRepo.calculateTotalRevenue();
+    }
 }

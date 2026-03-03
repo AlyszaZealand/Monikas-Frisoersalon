@@ -1,32 +1,41 @@
 package org.example.monikasfrisoersalon.Service;
 
-import org.example.monikasfrisoersalon.Model.Administrator;
 import org.example.monikasfrisoersalon.Model.Employee;
-import org.example.monikasfrisoersalon.Repoistory.EmployeeRepository;
+import org.example.monikasfrisoersalon.Repository.EmployeeRepository;
 
 import java.util.List;
 
 public class EmployeeService {
-    private final EmployeeRepository employeeRepository;
 
-    //
+    private final EmployeeRepository employeeRepo;
+
     public EmployeeService(EmployeeRepository employeeRepo) {
-        this.employeeRepository = employeeRepo;
+        this.employeeRepo = employeeRepo;
     }
 
-    // Create employee
-    public void handleCreateEmployee(String username, String password, int phonenumber) {
-        employeeRepository.createEmployee(username, password, phonenumber);
+    public void createEmployee(Employee employee) {
+        String phoneNumber = String.valueOf(employee.getPhoneNumber());
+        if (phoneNumber.length() != 8) {
+            throw new IllegalArgumentException("Fejl: Telefonnummeret skal være præcis 8 cifre.");
+        }
+        if (employee.getPassword() == null || employee.getPassword().length() < 4) {
+            throw new IllegalArgumentException("Fejl: Adgangskoden skal være på mindst 4 tegn.");
+        }
+        employeeRepo.createEmployee(employee);
     }
 
-    // Delete employee
-    public void handleDeleteEmployee(int employeeID) {
-        employeeRepository.deleteEmployee(employeeID);
+    public List<Employee> getEmployees() {
+        return employeeRepo.findEmployees();
     }
 
-    // Get Employees
-    public List<Employee> getEmployees(){
-        return employeeRepository.FindEmployees();
+    public void removeEmployeeSafely(int employeeId) {
+        employeeRepo.deleteEmployeeSafely(employeeId);
     }
 
+    public void updatePassword(int employeeId, String newPassword) {
+        if (newPassword == null || newPassword.length() < 4) {
+            throw new IllegalArgumentException("Fejl: Den nye adgangskode skal være mindst 4 tegn.");
+        }
+        employeeRepo.updatePassword(employeeId, newPassword);
+    }
 }
