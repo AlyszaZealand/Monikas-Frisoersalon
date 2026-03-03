@@ -10,7 +10,6 @@ import org.example.monikasfrisoersalon.Model.Administrator;
 import org.example.monikasfrisoersalon.Model.User;
 import org.example.monikasfrisoersalon.Model.Employee;
 import org.example.monikasfrisoersalon.Service.AuthenticatorService;
-import org.example.monikasfrisoersalon.View.Initialize;
 
 public class LoginController {
 

@@ -1,8 +1,6 @@
-package org.example.monikasfrisoersalon.View;
+package org.example.monikasfrisoersalon.View.Controller;
 
-import javafx.application.Application;
 import org.example.monikasfrisoersalon.Database.DB;
-import org.example.monikasfrisoersalon.MainApplication;
 import org.example.monikasfrisoersalon.Repository.*;
 import org.example.monikasfrisoersalon.Service.*;
 

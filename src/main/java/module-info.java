@@ -18,8 +18,9 @@ module org.example.monikasfrisoersalon {
     requires java.desktop;
 
 
-    opens org.example.monikasfrisoersalon to javafx.fxml;
     exports org.example.monikasfrisoersalon;
-    exports org.example.monikasfrisoersalon.View;
-    opens org.example.monikasfrisoersalon.View to javafx.fxml;
+    exports org.example.monikasfrisoersalon.View.Controller;
+//    opens org.example.monikasfrisoersalon.View to javafx.fxml;
+    opens org.example.monikasfrisoersalon.View.Controller to javafx.fxml;
+    opens org.example.monikasfrisoersalon to javafx.fxml, javafx.graphics;
 }

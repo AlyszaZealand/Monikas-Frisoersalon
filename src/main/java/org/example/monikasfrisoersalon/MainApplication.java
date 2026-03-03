@@ -4,8 +4,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.example.monikasfrisoersalon.View.Controller.Initialize;
 import org.example.monikasfrisoersalon.View.Controller.LoginController;
-import org.example.monikasfrisoersalon.View.Initialize;
 
 public class MainApplication extends Application {
 
@@ -15,7 +15,7 @@ public class MainApplication extends Application {
             Initialize init = new Initialize();
 
             // 2. Load FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource( "/login-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource( "/org/example/monikasfrisoersalon/login-view.fxml"));
 
             // 3. Inject services BEFORE load() is called
             loader.setControllerFactory(controllerClass -> {
