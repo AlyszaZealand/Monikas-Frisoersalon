@@ -34,7 +34,7 @@ class AppointmentRepositoryTest {
         assertEquals(34212343, appointment.getCustomer().getPhoneNumber(),"klaus' nummer skal være 34212343");
         assertEquals("Wash & brush", appointment.getTreatment().getTypeOfTreatment(),"første appointment type skal være wash & brush");
         assertEquals(150, appointment.getTreatment().getPrice(),"regner med at få 150");
-        
+
     }
 
     // appointment(customerid, employeeid, treatmentid, appstatus, startdate, enddate)
