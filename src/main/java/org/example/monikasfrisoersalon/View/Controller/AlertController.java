@@ -1,4 +1,4 @@
-package org.example.monikasfrisoersalon.Controller;
+package org.example.monikasfrisoersalon.View.Controller;
 
 // JavaFX Alert
 import javafx.scene.control.Alert;
