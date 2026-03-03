@@ -6,11 +6,6 @@ import org.example.monikasfrisoersalon.MainApplication;
 import org.example.monikasfrisoersalon.Repository.*;
 import org.example.monikasfrisoersalon.Service.*;
 
-import javax.imageio.spi.ServiceRegistry;
-
-import static javafx.application.Application.launch;
-
-
 public class Initialize {
 
     // Service klasserne
@@ -21,7 +16,6 @@ public class Initialize {
     private CustomerService customerService;
     private EmployeeService employeeService;
     private TreatmentService treatmentService;
-
 
     // Initialize metode
     public Initialize() {

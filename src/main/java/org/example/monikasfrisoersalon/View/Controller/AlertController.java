@@ -2,6 +2,7 @@ package org.example.monikasfrisoersalon.View.Controller;
 
 // JavaFX Alert
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 public class AlertController {
 
@@ -9,7 +10,6 @@ public class AlertController {
     public static void showAlert(Alert.AlertType type, String message) {
         Alert alert = new Alert(type, message, ButtonType.OK);
         alert.setHeaderText(null);
-        alert.setContentText(message);
         alert.showAndWait();
     }
 

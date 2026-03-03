@@ -1,6 +1,8 @@
 package org.example.monikasfrisoersalon.View.Controller;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -25,55 +27,32 @@ public class LoginController {
     }
 
     @FXML
-    public void onLoginButtonClick() {
+    public void onLoginButtonClick(ActionEvent event) {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
+        // Login Sikkerhed
         if(username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()) {
-            AlertController.showAlert("Login Fejl", "Skriv venligst både brugernavn og kode");
+            AlertController.showAlert(Alert.AlertType.WARNING, "Skriv venligst både brugernavn og kode");
         }
 
         try {
+            // Authenticate Brugeren
             User user = authenticatorService.login(username, password);
 
+            // Load Admin View
             if (user instanceof Administrator) {
-                AlertController.showAlert("Login Fuldført", "Administrator Login Fuldført");
-                // load admin view
+                SceneSwitch.switchScene(event, "/Adminitrator-view.fxml");
+                AlertController.showAlert(Alert.AlertType.CONFIRMATION, "Administrator Login Fuldført");
+
+            // Load Employee View
             } else if (user instanceof Employee) {
-                AlertController.showAlert("Login Fuldført", "Employee Login Fuldført");
-                // load employee view
+                SceneSwitch.switchScene(event, "/Employee-view.fxml");
+                AlertController.showAlert(Alert.AlertType.CONFIRMATION, "Employee Login Fuldført");
             }
 
-        } catch (IllegalArgumentException e) {
-            AlertController.showAlert("Login Fejl", "Prøv Igen");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-
-//        @FXML public void onLoginButtonClick(ActionEvent event){
-//            String email = emailField.getText();
-//            statusLabel.setText("");
-//
-//            try{
-//                User foundUser = userService.login(email);
-//                SceneSwitch.switchToStreaming(event, foundUser, userService, movieService, favService);
-//            } catch(ValidateException e){
-//                statusLabel.setText(e.getMessage());
-//            } catch(Exception e){
-//                AlertController.showAlert("Error", "Der skete en fel: " + e.getMessage());
-//            }
-//        }
-//
-//    public User login(String email, String password){
-//        if (email == null || email.isEmpty()){
-//            throw new ValidateException("Skriv en email i feltet");
-//        }
-//        List<User> users = userRepo.findByEmail(email);
-//
-//        if(users == null || users.isEmpty()){
-//            throw new ValidateException("Ingen bruger fundet med denne email");
-//        }
-//        return users.get(0);
-//    }
-
-
 }

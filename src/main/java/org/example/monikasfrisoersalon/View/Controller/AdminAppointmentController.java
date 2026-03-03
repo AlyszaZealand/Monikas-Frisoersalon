@@ -9,6 +9,8 @@ import org.example.monikasfrisoersalon.Model.Appointment;
 import org.example.monikasfrisoersalon.Model.Customer;
 import org.example.monikasfrisoersalon.Model.Employee;
 
+import java.io.IOException;
+
 public class AdminAppointmentController {
 
     // Konto
@@ -58,6 +60,8 @@ public class AdminAppointmentController {
             e.printStackTrace();
         }
     }
+
+
 
 
 }
