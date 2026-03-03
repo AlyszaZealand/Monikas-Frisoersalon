@@ -1,6 +1,8 @@
 package org.example.monikasfrisoersalon.View;
 
+import javafx.application.Application;
 import org.example.monikasfrisoersalon.Database.DB;
+import org.example.monikasfrisoersalon.MainApplication;
 import org.example.monikasfrisoersalon.Repository.*;
 import org.example.monikasfrisoersalon.Service.*;
 
@@ -22,7 +24,7 @@ public class Initialize {
 
 
     // Initialize metode
-    private Initialize() {
+    public Initialize() {
         DB db = new DB();
 
         AdministratorRepository administratorRepository = new AdministratorRepository(db);
@@ -41,8 +43,6 @@ public class Initialize {
 
     }
 
-    public static
-
     public AuthenticatorService getAuthenticatorService() { return authenticatorService; }
     public AppointmentService getAppointmentService() { return appointmentService; }
     public EmployeeService getEmployeeService() { return employeeService; }
@@ -52,9 +52,9 @@ public class Initialize {
     public AdministratorService getAdministratorService() { return administratorService; }
 
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+/*    public static void main(String[] args) {
+        Application.launch(MainApplication.class, args);
+    } */
 }
 
 

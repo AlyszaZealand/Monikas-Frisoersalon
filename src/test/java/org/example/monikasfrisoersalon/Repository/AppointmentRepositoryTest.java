@@ -228,7 +228,11 @@ class AppointmentRepositoryTest {
         appointmentForUpdate.setStartDate(newStart); // Opdater startdatoen for aftalen
         appointmentForUpdate.setEndDate(newEnd); // Opdater slutdatoen for aftalen
         appointmentForUpdate.setTreatment(newTreatment); // Opdater behandlingen for aftalen
-        appointmentRepo.updateAppointment(appointmentForUpdate); // Gem ændringerne i databasen
+        try{
+            appointmentRepo.updateAppointment(appointmentForUpdate); // Gem ændringerne i databasen
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
 
         List<Appointment> appointmentAfterUpdate = appointmentRepo.findAllAppointments();
         Appointment updatedAppointment = null;
@@ -248,7 +252,11 @@ class AppointmentRepositoryTest {
         updatedAppointment.setStartDate(originalStart);
         updatedAppointment.setEndDate(originalEnd);
         updatedAppointment.setTreatment(originalTreatment);
-        appointmentRepo.updateAppointment(updatedAppointment);
+        try{
+            appointmentRepo.updateAppointment(updatedAppointment);
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
 

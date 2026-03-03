@@ -1,7 +1,6 @@
 package org.example.monikasfrisoersalon.View.Controller;
 
 import javafx.fxml.FXML;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.control.TableView;
@@ -10,7 +9,7 @@ import org.example.monikasfrisoersalon.Model.Appointment;
 import org.example.monikasfrisoersalon.Model.Customer;
 import org.example.monikasfrisoersalon.Model.Employee;
 
-public class AppointmentController {
+public class AdminAppointmentController {
 
     // Konto
     private Employee employee;
@@ -51,10 +50,12 @@ public class AppointmentController {
 
     // Log Ud
     @FXML
-    private void onLogout() {
+    private void onLogout(ActionEvent event) {
         try {
             SceneSwitch.switchScene(event, "/login-view.fxml");
-            showAlert(Alert.AlertType.CONFIRMATION, "Log ud");
+            AlertController.showAlert(Alert.AlertType.CONFIRMATION, "Log ud");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
