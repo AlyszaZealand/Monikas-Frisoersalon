@@ -26,6 +26,8 @@ public class TreatmentService {
         treatmentRepo.createTreatment(treatment);
     }
 
+
+
     public List<Treatment> getActiveTreatments() {
         return treatmentRepo.findActiveTreatments();
     }

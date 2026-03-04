@@ -6,9 +6,26 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
+<BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.monikasfrisoersalon.View.Controller.AdminController"
-            prefHeight="400.0" prefWidth="600.0">
+            fx:controller="org.example.monikasfrisoersalon.View.Controller.AdminController" >
 
-</AnchorPane>
+
+    <TableView fx:id="employeeTable" prefHeight="-Infinity" prefWidth="-Infinity">
+    <columns>
+       <TableColumn fx:id="employeeNameColumn" prefWidth="150.0" text="Navn" />
+       <TableColumn fx:id="employeePhoneNumberColumn" prefWidth="200.0" text="Telefonnummer" />
+    </columns>
+
+    <TableView fx:id="appointmentTable">
+        <columns>
+            <TableColumn fx:id="customerColumn" text="Kunde" />
+            <TableColumn fx:id="employeeColumn" text="Medarbejder" />
+            <TableColumn fx:id="treatmentColumn" text="Behandling" />
+            <TableColumn fx:id="startDateColumn" text="Start" />
+            <TableColumn fx:id="endDateColumn" text="Slut" />
+            <TableColumn fx:id="statusColumn" text="Status" />
+        </columns>
+    </TableView>
+
+</BorderPane>

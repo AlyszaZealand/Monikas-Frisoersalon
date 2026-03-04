@@ -6,9 +6,15 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
+<BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.monikasfrisoersalon.View.Controller.EmployeeController"
-            prefHeight="400.0" prefWidth="600.0">
+            fx:controller="org.example.monikasfrisoersalon.View.Controller.EmployeeController" >
 
-</AnchorPane>
+    <TableView fx:id="customerTable" prefHeight="-Infinity" prefWidth="-Infinity">-->
+        <columns>-->
+            <TableColumn fx:id="customerNameColumn" prefWidth="150.0" text="Navn" />-->
+            <TableColumn fx:id="customerTreatmentColumn" prefWidth="150.0" text="Behandling" />-->
+            <TableColumn fx:id="customerPhoneNumberColumn" prefWidth="200.0" text="Telefonnummer" />-->
+        </columns>-->
+
+</BorderPane>
