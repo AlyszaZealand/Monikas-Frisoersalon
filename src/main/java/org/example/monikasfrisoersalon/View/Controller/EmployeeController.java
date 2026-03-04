@@ -1,31 +1,31 @@
 package org.example.monikasfrisoersalon.View.Controller;
 
-import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
-import javafx.scene.control.*;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import org.example.monikasfrisoersalon.Model.Appointment;
+import org.example.monikasfrisoersalon.Model.Customer;
 import org.example.monikasfrisoersalon.Model.User;
 import org.example.monikasfrisoersalon.Service.AppointmentService;
-import org.example.monikasfrisoersalon.Model.Customer;
-import org.example.monikasfrisoersalon.Service.EmployeeService;
+import org.example.monikasfrisoersalon.Service.CalendarService;
 
 import java.io.IOException;
 
-public class AdminController {
+public class EmployeeController {
 
-    // 1. Variabler til at gemme de ting, vi får fra SceneSwitch
     private final User currentUser;
-    private final EmployeeService employeeService;
     private final AppointmentService appointmentService;
+    private final CalendarService calendarService;
 
 
-    public AdminController(User currentUser, EmployeeService employeeService, AppointmentService appointmentService) {
+    public EmployeeController(User currentUser, AppointmentService appointmentService, CalendarService calendarService) {
         this.currentUser = currentUser;
-        this.employeeService = employeeService;
         this.appointmentService = appointmentService;
+        this.calendarService = calendarService;
     }
-
 
     // Kolonner
     @FXML private TableView<Appointment> appointmentTable;
@@ -45,7 +45,7 @@ public class AdminController {
     // Tilføj Appointment
     @FXML
     private void onAddAppointment() {
-        
+
     }
 
     // Slet Appointment
@@ -71,7 +71,5 @@ public class AdminController {
         }
     }
 
-
-
-
 }
+
