@@ -77,6 +77,29 @@ public class EmployeeController {
         if(treatmentComboBox != null){
             treatmentComboBox.getItems().addAll(treatmentService.getActiveTreatments());
         }
+
+        // --- NYT: Lytter der udfylder felterne når man klikker på en aftale i tabellen ---
+        if(appointmentTable != null) {
+            // Tilføj en listener til tabellens selection model, der reagerer på ændringer i det valgte element
+            // Når en aftale vælges, opdateres inputfelterne med oplysningerne fra den valgte aftale
+            // Vi tjekker først om nytValg ikke er null, for at undgå NullPointerException, hvis der ikke er valgt noget i tabellen
+            appointmentTable.getSelectionModel().selectedItemProperty().addListener((obs, gammelValg, nytValg) -> {
+                if (nytValg != null) {
+                    customerNameField.setText(nytValg.getCustomer().getUsername()); // Sætter customerNameField til at vise navnet på kunden fra den valgte aftale
+                    customerPhoneField.setText(String.valueOf(nytValg.getCustomer().getPhoneNumber())); // Sætter customerPhoneField til at vise telefonnummeret på kunden fra den valgte aftale
+                    appointmentDatePicker.setValue(nytValg.getStartDate().toLocalDate()); // Sætter appointmentDatePicker til at vise datoen for den valgte aftale ved at konvertere startDate til LocalDate
+                    appointmentTimeField.setText(nytValg.getStartDate().format(DateTimeFormatter.ofPattern("HH:mm"))); // Sætter appointmentTimeField til at vise tidspunktet for den valgte aftale ved at formatere startDate til kun at vise time og minut
+
+                    // Find og vælg den rigtige behandling i dropdown-menuen
+                    for (Treatment t : treatmentComboBox.getItems()) {
+                        if (t.getId() == nytValg.getTreatment().getId()) {
+                            treatmentComboBox.setValue(t);
+                            break;
+                        }
+                    }
+                }
+            });
+        }
     }
 
 
@@ -176,7 +199,7 @@ public class EmployeeController {
 
     // Rediger Appointment
     @FXML
-    private void  onEditAppointment() {
+    private void onEditAppointment() {
         // Henter den valgte aftale fra tabellen
         Appointment selected = appointmentTable.getSelectionModel().getSelectedItem();
 
@@ -186,10 +209,56 @@ public class EmployeeController {
             return;
         }
 
+        try {
+            // Henter de nye værdier fra felterne (vi ignorerer kundenavn og tlf, da vi kun retter i tid/behandling)
+            Treatment selectedTreatment = treatmentComboBox.getValue();
+            LocalDate date = appointmentDatePicker.getValue();
+            String time = appointmentTimeField.getText();
 
+            // Sikkerhedstjek
+            if (selectedTreatment == null || date == null || time == null || time.trim().isEmpty()) {
+                AlertController.showAlert(Alert.AlertType.WARNING, "Udfyld venligst dato, tid og behandling for at redigere.");
+                return;
+            }
 
+            // Byg den nye tid og dato
+            java.time.LocalTime localTime = java.time.LocalTime.parse(time);
+            java.time.LocalDateTime newStartDateTime = java.time.LocalDateTime.of(date, localTime);
 
+            // Beregn ny sluttid ud fra den valgte behandlings varighed
+            java.time.LocalDateTime newEndDateTime = newStartDateTime.plusMinutes(selectedTreatment.getDuration());
+
+            // Opdater selve objektet med de nye værdier
+            selected.setStartDate(newStartDateTime);
+            selected.setEndDate(newEndDateTime);
+            selected.setTreatment(selectedTreatment);
+
+            // Gem ændringerne via Servicen (Den tjekker automatisk for overlap og fejl!)
+            appointmentService.updateAppointment(selected);
+
+            // Succes! Ryd felterne og opdater tabellen
+            customerNameField.clear();
+            customerPhoneField.clear();
+            appointmentTimeField.clear();
+            appointmentDatePicker.setValue(null);
+            treatmentComboBox.setValue(null);
+
+            // Fjern markeringen i tabellen, så vi er klar til næste handling
+            appointmentTable.getSelectionModel().clearSelection();
+
+            AlertController.showAlert(Alert.AlertType.CONFIRMATION, "Aftalen er opdateret!");
+            loadAppointments();
+
+        } catch (java.time.format.DateTimeParseException e) {
+            AlertController.showAlert(Alert.AlertType.ERROR, "Skriv venligst et gyldigt tidspunkt som f.eks. '10:30'");
+        } catch (IllegalStateException e) {
+            // Fanger overlap-fejl (dobbeltbooking) fra din Service
+            AlertController.showAlert(Alert.AlertType.ERROR, e.getMessage());
+        } catch (Exception e) {
+            AlertController.showAlert(Alert.AlertType.ERROR, "Fejl ved opdatering af aftale: " + e.getMessage());
+        }
     }
+
 
     // Log Ud
     @FXML

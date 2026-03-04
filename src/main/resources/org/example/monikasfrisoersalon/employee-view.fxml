@@ -1,37 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.monikasfrisoersalon.View.Controller.EmployeeController" >
+<AnchorPane prefHeight="600.0" prefWidth="950.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.monikasfrisoersalon.View.Controller.EmployeeController">
+<children>
 
-    <Button fx:id="addAppointment" onAction="#onAddAppointment" layoutX="116.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="Opret aftale" />
+    <Label fx:id="usernameText" layoutX="20.0" layoutY="20.0" text="Logget ind som: ">
+        <font>
+            <Font name="System Bold" size="18.0" />
+        </font>
+    </Label>
+    <Button fx:id="logoutButton" layoutX="860.0" layoutY="18.0" mnemonicParsing="false" onAction="#onLogout" text="Log ud" />
 
-    <TableView fx:id="customerTable" prefHeight="-Infinity" prefWidth="-Infinity">-->
-        <columns>-->
-            <TableColumn fx:id="customerNameColumn" prefWidth="150.0" text="Navn" />-->
-            <TableColumn fx:id="customerTreatmentColumn" prefWidth="150.0" text="Behandling" />-->
-            <TableColumn fx:id="customerPhoneNumberColumn" prefWidth="200.0" text="Telefonnummer" />-->
-        </columns>-->
-    <TableView fx:id="appointmentTable" layoutX="80.0" layoutY="258.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <TableView fx:id="appointmentTable" layoutX="20.0" layoutY="60.0" prefHeight="500.0" prefWidth="650.0">
         <columns>
-            <TableColumn fx:id="customerColumn" text="Kunde" />
-            <TableColumn fx:id="employeeColumn" text="Medarbejder" />
-            <TableColumn fx:id="treatmentColumn" text="Behandling" />
-            <TableColumn fx:id="startDateColumn" text="Start" />
-            <TableColumn fx:id="endDateColumn" text="Slut" />
-            <TableColumn fx:id="statusColumn" text="Status" />
+            <TableColumn fx:id="startDateColumn" prefWidth="120.0" text="Start tid" />
+            <TableColumn fx:id="endDateColumn" prefWidth="120.0" text="Slut tid" />
+            <TableColumn fx:id="customerColumn" prefWidth="110.0" text="Kunde" />
+            <TableColumn fx:id="employeeColumn" prefWidth="100.0" text="Medarbejder" />
+            <TableColumn fx:id="treatmentColumn" prefWidth="125.0" text="Behandling" />
+            <TableColumn fx:id="statusColumn" prefWidth="73.0" text="Status" />
         </columns>
     </TableView>
-    <Button fx:id="deleteAppointment" onAction="#onDeleteAppointment" layoutX="126.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="Aflys aftale" />
 
-    <Button fx:id="editAppointment" onAction="#onEditAppointment" layoutX="136.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="Rediger aftale" />
-    <Button fx:id="logoutButton" onAction="#onLogout" layoutX="146.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="Log ud" />
+    <VBox layoutX="690.0" layoutY="60.0" prefHeight="500.0" prefWidth="230.0" spacing="12.0">
+        <children>
+            <Label text="Aftale detaljer">
+                <font>
+                    <Font name="System Bold" size="16.0" />
+                </font>
+            </Label>
 
+            <VBox spacing="2.0">
+                <Label text="Kundenavn:" />
+                <TextField fx:id="customerNameField" promptText="F.eks. Jens Jensen" />
+            </VBox>
 
-</BorderPane>
+            <VBox spacing="2.0">
+                <Label text="Telefonnummer:" />
+                <TextField fx:id="customerPhoneField" promptText="F.eks. 12345678" />
+            </VBox>
+
+            <VBox spacing="2.0">
+                <Label text="Dato:" />
+                <DatePicker fx:id="appointmentDatePicker" prefWidth="240.0" />
+            </VBox>
+
+            <VBox spacing="2.0">
+                <Label text="Tidspunkt (HH:mm):" />
+                <TextField fx:id="appointmentTimeField" promptText="F.eks. 10:30" />
+            </VBox>
+
+            <VBox spacing="2.0">
+                <Label text="Behandling:" />
+                <ComboBox fx:id="treatmentComboBox" prefWidth="240.0" promptText="Vælg behandling" />
+            </VBox>
+
+            <VBox spacing="10.0">
+                <padding>
+                    <Insets top="15.0" />
+                </padding>
+                <Button fx:id="addAppointment" mnemonicParsing="false" onAction="#onAddAppointment" prefWidth="240.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" text="Opret ny aftale" />
+                <Button fx:id="editAppointment" mnemonicParsing="false" onAction="#onEditAppointment" prefWidth="240.0" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;" text="Rediger valgt aftale" />
+                <Button fx:id="deleteAppointment" mnemonicParsing="false" onAction="#onDeleteAppointment" prefWidth="240.0" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold;" text="Aflys valgt aftale" />
+            </VBox>
+        </children>
+    </VBox>
+
+</children>
+</AnchorPane>
