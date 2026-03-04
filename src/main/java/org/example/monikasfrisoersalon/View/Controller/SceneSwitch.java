@@ -36,7 +36,9 @@ public class SceneSwitch {
                 return new EmployeeController(
                         currentUser,
                         container.getAppointmentService(),
-                        container.getCalendarService()
+                        container.getCalendarService(),
+                        container.getCustomerService(),
+                        container.getTreatmentService()
                 );
             }
 

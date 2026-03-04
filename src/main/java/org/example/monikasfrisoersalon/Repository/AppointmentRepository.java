@@ -126,7 +126,7 @@ public class AppointmentRepository {
 
     // Create appointment SQL
     public int createAppointment(Appointment appointment) throws SQLException {
-        String sql = "Insert into appointment (customerid, employeeid,treatmentid, appstatus, startdate,enddate) values (?,?,?,?,?,?)";
+        String sql = "Insert into appointment (customerid, employeeid, treatmentid, appstatus, startdate, enddate) values (?,?,?,?,?,?)";
 
         try (Connection c = db.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {

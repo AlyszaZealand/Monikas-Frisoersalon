@@ -2,30 +2,39 @@ package org.example.monikasfrisoersalon.View.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
-import org.example.monikasfrisoersalon.Model.Appointment;
-import org.example.monikasfrisoersalon.Model.Customer;
-import org.example.monikasfrisoersalon.Model.User;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import org.example.monikasfrisoersalon.Model.*;
 import org.example.monikasfrisoersalon.Service.AppointmentService;
 import org.example.monikasfrisoersalon.Service.CalendarService;
+import org.example.monikasfrisoersalon.Service.CustomerService;
+import org.example.monikasfrisoersalon.Service.TreatmentService;
+
+import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
 
 public class EmployeeController {
 
     private final User currentUser;
     private final AppointmentService appointmentService;
     private final CalendarService calendarService;
+    private final CustomerService customerService;
+    private final TreatmentService treatmentService;
 
 
-    public EmployeeController(User currentUser, AppointmentService appointmentService, CalendarService calendarService) {
+
+    public EmployeeController(User currentUser, AppointmentService appointmentService, CalendarService calendarService, CustomerService customerService, TreatmentService treatmentService) {
         this.currentUser = currentUser;
         this.appointmentService = appointmentService;
         this.calendarService = calendarService;
+        this.customerService = customerService;
+        this.treatmentService = treatmentService;
+
     }
+
 
     // Kolonner
     @FXML private TableView<Appointment> appointmentTable;
