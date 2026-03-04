@@ -8,18 +8,17 @@ import org.example.monikasfrisoersalon.Model.User;
 import org.example.monikasfrisoersalon.Model.Employee;
 import org.example.monikasfrisoersalon.Service.AuthenticatorService;
 
+import java.io.IOException;
+
 public class LoginController {
 
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
-    @FXML private Button loginButton;
-    @FXML private Label username;
-    @FXML private Label password;
 
     private final AuthenticatorService authenticatorService;
 
-    public LoginController(AuthenticatorService aut){
-        this.authenticatorService = aut;
+    public LoginController(AuthenticatorService authenticatorService){
+        this.authenticatorService = authenticatorService;
     }
 
     @FXML
@@ -30,6 +29,7 @@ public class LoginController {
         // Login Sikkerhed
         if(username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()) {
             AlertController.showAlert(Alert.AlertType.WARNING, "Skriv venligst både brugernavn og kode");
+            return;
         }
 
         try {
@@ -38,17 +38,19 @@ public class LoginController {
 
             // Load Admin View
             if (user instanceof Administrator) {
-                SceneSwitch.switchScene(event, "/Adminitrator-view.fxml");
+                SceneSwitch.switchScene(event, "/org/example/monikasfrisoersalon/Adminitrator-view.fxml", user, "Administrator Dashboard");
                 AlertController.showAlert(Alert.AlertType.CONFIRMATION, "Administrator Login Fuldført");
 
             // Load Employee View
             } else if (user instanceof Employee) {
-                SceneSwitch.switchScene(event, "/Employee-view.fxml");
+                SceneSwitch.switchScene(event, "/org/example/monikasfrisoersalon/employee-view.fxml", user, "Medarbejder Dashboard");
                 AlertController.showAlert(Alert.AlertType.CONFIRMATION, "Employee Login Fuldført");
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            AlertController.showAlert(Alert.AlertType.ERROR, e.getMessage());
+        } catch (IOException e) {
+            AlertController.showAlert(Alert.AlertType.ERROR, "Fejl ved indlæsning af scene: " + e.getMessage());
         }
     }
 }

@@ -6,54 +6,28 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.example.monikasfrisoersalon.View.Controller.Initialize;
 import org.example.monikasfrisoersalon.View.Controller.LoginController;
+import org.example.monikasfrisoersalon.View.Controller.SceneSwitch;
 
 public class MainApplication extends Application {
 
-        @Override
-        public void start(Stage stage) throws Exception {
-            // 1. Build all services once
-            Initialize init = new Initialize();
+    @Override
+    public void start(Stage stage) throws Exception {
+        // Her opretter vi en instans af Initialize, som er vores "container" for alle services. Vi sætter den også i SceneSwitch, så vi kan bruge den til at oprette controllers senere.
+        Initialize init = new Initialize();
+        SceneSwitch.setContainer(init);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/monikasfrisoersalon/login-view.fxml"));
+        loader.setControllerFactory(controllerClass -> {
+            if (controllerClass == LoginController.class) {
+                return new LoginController(init.getAuthenticatorService());
+            }
+            return null;
+        });
 
-            // 2. Load FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource( "/login-view.fxml"));
-            var url = getClass().getResource("/org/example/monikasfrisoersalon/login-view.fxml");
-            System.out.println("FXML found at: " + url); // null = wrong path
-
-            // 3. Inject services BEFORE load() is called
-            loader.setControllerFactory(controllerClass -> {
-                if (controllerClass == LoginController.class) {
-                    return new LoginController(init.getAuthenticatorService());
-                }
-                return null;
-            });
-
-            // 4. Load and show
-            Scene scene = new Scene(loader.load());
-            stage.setTitle("Monikas Frisørsalon");
-            stage.setScene(scene);
-            stage.show();
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    @Override
-//    public void start(Stage stage) throws Exception {
-//        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/login-view.fxml"));
-//        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-//
-//        stage.setTitle("Kalender");
-//        stage.setScene(scene);
-//        stage.show();
-//    }
+        Scene scene = new Scene(loader.load());
+        stage.setTitle("Monikas Frisørsalon - Login");
+        stage.setScene(scene);
+        stage.show();
+    }
 }
+
+

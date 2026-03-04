@@ -4,18 +4,28 @@ import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.control.TableView;
-import org.example.monikasfrisoersalon.Model.Administrator;
 import org.example.monikasfrisoersalon.Model.Appointment;
+import org.example.monikasfrisoersalon.Model.User;
+import org.example.monikasfrisoersalon.Service.AppointmentService;
 import org.example.monikasfrisoersalon.Model.Customer;
-import org.example.monikasfrisoersalon.Model.Employee;
+import org.example.monikasfrisoersalon.Service.EmployeeService;
 
 import java.io.IOException;
 
-public class AdminAppointmentController {
+public class AdminController {
 
-    // Konto
-    private Employee employee;
-    private Administrator administrator;
+    // 1. Variabler til at gemme de ting, vi får fra SceneSwitch
+    private final User currentUser;
+    private final EmployeeService employeeService;
+    private final AppointmentService appointmentService;
+
+
+    public AdminController(User currentUser, EmployeeService employeeService, AppointmentService appointmentService) {
+        this.currentUser = currentUser;
+        this.employeeService = employeeService;
+        this.appointmentService = appointmentService;
+    }
+
 
     // Kolonner
     @FXML private TableView<Appointment> appointmentTable;
@@ -52,9 +62,9 @@ public class AdminAppointmentController {
 
     // Log Ud
     @FXML
-    private void onLogout(ActionEvent event) {
+    private void onLogout(ActionEvent event, User user) {
         try {
-            SceneSwitch.switchScene(event, "/login-view.fxml");
+            SceneSwitch.switchScene(event, "/login-view.fxml", user, "Login");
             AlertController.showAlert(Alert.AlertType.CONFIRMATION, "Log ud");
         } catch (IOException e) {
             e.printStackTrace();

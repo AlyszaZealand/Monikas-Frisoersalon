@@ -16,11 +16,10 @@ module org.example.monikasfrisoersalon {
     requires javafx.fxml;
     requires java.sql;
     requires java.desktop;
-
+    requires mysql.connector.j;
 
     exports org.example.monikasfrisoersalon;
     exports org.example.monikasfrisoersalon.View.Controller;
-//    opens org.example.monikasfrisoersalon.View to javafx.fxml;
     opens org.example.monikasfrisoersalon.View.Controller to javafx.fxml;
     opens org.example.monikasfrisoersalon to javafx.fxml, javafx.graphics;
 }
