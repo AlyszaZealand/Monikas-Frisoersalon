@@ -1,23 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.monikasfrisoersalon.View.Controller.AdminController" >
-
-
-    <TableView fx:id="employeeTable" prefHeight="-Infinity" prefWidth="-Infinity">
-    <columns>
-       <TableColumn fx:id="employeeNameColumn" prefWidth="150.0" text="Navn" />
-       <TableColumn fx:id="employeePhoneNumberColumn" prefWidth="200.0" text="Telefonnummer" />
-    </columns>
-
-    <TableView fx:id="appointmentTable">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.monikasfrisoersalon.View.Controller.AdminController">
+    <padding>
+        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+    </padding>
+    <TableView fx:id="appointmentTable" layoutX="80.0" layoutY="258.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columns>
             <TableColumn fx:id="customerColumn" text="Kunde" />
             <TableColumn fx:id="employeeColumn" text="Medarbejder" />
@@ -28,4 +19,9 @@
         </columns>
     </TableView>
 
-</BorderPane>
+    <Button fx:id="logoutButton" onAction="#onLogout" layoutX="146.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="Log ud" />
+    <Button fx:id="deleteEmployeeButton" onAction="#onDeleteEmployee" layoutX="126.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="Slet medarbejdere" />
+    <Button fx:id="addEmployeeButton" onAction="#onAddEmployee" layoutX="136.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="Tilføj medarbejdere" />
+    <Button fx:id="editEmployeeButton" onAction="#onEditEmployee" layoutX="136.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="Rediger medarbejdere" />
+
+</AnchorPane>

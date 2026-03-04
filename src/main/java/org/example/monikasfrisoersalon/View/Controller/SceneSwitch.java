@@ -28,7 +28,8 @@ public class SceneSwitch {
                 return new AdminController(
                         currentUser,
                         container.getEmployeeService(),
-                        container.getAppointmentService()
+                        container.getAppointmentService(),
+                        container.getTreatmentService()
                 );
             }
 

@@ -10,11 +10,28 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="org.example.monikasfrisoersalon.View.Controller.EmployeeController" >
 
+    <Button fx:id="addAppointment" onAction="#onAddAppointment" layoutX="116.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="Opret aftale" />
+
     <TableView fx:id="customerTable" prefHeight="-Infinity" prefWidth="-Infinity">-->
         <columns>-->
             <TableColumn fx:id="customerNameColumn" prefWidth="150.0" text="Navn" />-->
             <TableColumn fx:id="customerTreatmentColumn" prefWidth="150.0" text="Behandling" />-->
             <TableColumn fx:id="customerPhoneNumberColumn" prefWidth="200.0" text="Telefonnummer" />-->
         </columns>-->
+    <TableView fx:id="appointmentTable" layoutX="80.0" layoutY="258.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <columns>
+            <TableColumn fx:id="customerColumn" text="Kunde" />
+            <TableColumn fx:id="employeeColumn" text="Medarbejder" />
+            <TableColumn fx:id="treatmentColumn" text="Behandling" />
+            <TableColumn fx:id="startDateColumn" text="Start" />
+            <TableColumn fx:id="endDateColumn" text="Slut" />
+            <TableColumn fx:id="statusColumn" text="Status" />
+        </columns>
+    </TableView>
+    <Button fx:id="deleteAppointment" onAction="#onDeleteAppointment" layoutX="126.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="Aflys aftale" />
+
+    <Button fx:id="editAppointment" onAction="#onEditAppointment" layoutX="136.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="Rediger aftale" />
+    <Button fx:id="logoutButton" onAction="#onLogout" layoutX="146.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="Log ud" />
+
 
 </BorderPane>

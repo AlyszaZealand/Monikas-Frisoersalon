@@ -12,6 +12,7 @@ import org.example.monikasfrisoersalon.Model.User;
 import org.example.monikasfrisoersalon.Service.AppointmentService;
 import org.example.monikasfrisoersalon.Model.Customer;
 import org.example.monikasfrisoersalon.Service.EmployeeService;
+import org.example.monikasfrisoersalon.Service.TreatmentService;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
@@ -23,12 +24,14 @@ public class AdminController {
     private final User currentUser;
     private final EmployeeService employeeService;
     private final AppointmentService appointmentService;
+    private final TreatmentService treatmentService;
 
 
-    public AdminController(User currentUser, EmployeeService employeeService, AppointmentService appointmentService) {
+    public AdminController(User currentUser, EmployeeService employeeService, AppointmentService appointmentService, TreatmentService treatmentService) {
         this.currentUser = currentUser;
         this.employeeService = employeeService;
         this.appointmentService = appointmentService;
+        this.treatmentService = treatmentService;
     }
 
 
@@ -49,32 +52,31 @@ public class AdminController {
     @FXML private Label usernameText;
 
     // Knapper
-    @FXML private Button addAppointment;
-    @FXML private Button deleteAppointment;
-    @FXML private Button editAppointment;
     @FXML private Button logoutButton;
 
     // Admin specifikke knapper
-    @FXML private Button deleteEmployeesButton;
-    @FXML private Button editEmployeesButton;
+    @FXML private Button deleteEmployeeButton;
+    @FXML private Button addEmployeeButton;
+    @FXML private Button editEmployeeButton;
 
     // ------------------------------------------------------------------------------------------------------------- //
 
     // Tilføj Appointment
     @FXML
-    private void onAddAppointment() {
+    private void onAddEmployee() {
 
     }
 
     // Slet Appointment
     @FXML
-    private void onDeleteAppointment() {
+    private void onDeleteEmployee() {
 
     }
 
     // Rediger Appointment
     @FXML
-    private void  onEditAppointment() {
+    private void  onEditEmployee() {
+
     }
 
     // Calendar
