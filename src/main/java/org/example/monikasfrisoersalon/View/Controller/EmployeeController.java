@@ -11,7 +11,6 @@ import org.example.monikasfrisoersalon.Service.CalendarService;
 import org.example.monikasfrisoersalon.Service.CustomerService;
 import org.example.monikasfrisoersalon.Service.TreatmentService;
 
-import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.io.IOException;
 import java.time.LocalDate;

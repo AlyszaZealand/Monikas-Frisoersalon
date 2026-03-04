@@ -42,6 +42,11 @@ public class SceneSwitch {
                         container.getTreatmentService()
                 );
             }
+            if (controllerClass == LoginController.class) {
+                return new LoginController(
+                        container.getAuthenticatorService()
+                );
+            }
 
             return null;
         });

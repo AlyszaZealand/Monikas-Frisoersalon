@@ -1,27 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.monikasfrisoersalon.View.Controller.AdminController">
-    <padding>
-        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
-    </padding>
-    <TableView fx:id="appointmentTable" layoutX="80.0" layoutY="258.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <columns>
-            <TableColumn fx:id="customerColumn" text="Kunde" />
-            <TableColumn fx:id="employeeColumn" text="Medarbejder" />
-            <TableColumn fx:id="treatmentColumn" text="Behandling" />
-            <TableColumn fx:id="startDateColumn" text="Start" />
-            <TableColumn fx:id="endDateColumn" text="Slut" />
-            <TableColumn fx:id="statusColumn" text="Status" />
-        </columns>
-    </TableView>
+<AnchorPane prefHeight="650.0" prefWidth="1050.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.monikasfrisoersalon.View.Controller.AdminController">
+    <children>
 
-    <Button fx:id="logoutButton" onAction="#onLogout" layoutX="146.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="Log ud" />
-    <Button fx:id="deleteEmployeeButton" onAction="#onDeleteEmployee" layoutX="126.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="Slet medarbejdere" />
-    <Button fx:id="addEmployeeButton" onAction="#onAddEmployee" layoutX="136.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="Tilføj medarbejdere" />
-    <Button fx:id="editEmployeeButton" onAction="#onEditEmployee" layoutX="136.0" layoutY="14.0" prefHeight="25.0" prefWidth="110.0" text="Rediger medarbejdere" />
+        <Label fx:id="usernameText" layoutX="20.0" layoutY="20.0" text="Logget ind som Admin: ">
+            <font>
+                <Font name="System Bold" size="18.0" />
+            </font>
+        </Label>
+        <Button fx:id="logoutButton" layoutX="950.0" layoutY="18.0" mnemonicParsing="false" onAction="#onLogout" text="Log ud" />
 
+        <Label layoutX="20.0" layoutY="60.0" text="Oversigt over alle aftaler">
+            <font>
+                <Font name="System Bold" size="16.0" />
+            </font>
+        </Label>
+
+        <DatePicker fx:id="appointmentDatePicker" layoutX="20.0" layoutY="85.0" prefWidth="200.0" promptText="Filtrer på dato..." />
+
+        <TableView fx:id="appointmentTable" layoutX="20.0" layoutY="120.0" prefHeight="500.0" prefWidth="650.0">
+            <columns>
+                <TableColumn fx:id="startDateColumn" prefWidth="110.0" text="Start" />
+                <TableColumn fx:id="endDateColumn" prefWidth="110.0" text="Slut" />
+                <TableColumn fx:id="customerColumn" prefWidth="110.0" text="Kunde" />
+                <TableColumn fx:id="employeeColumn" prefWidth="100.0" text="Frisør" />
+                <TableColumn fx:id="treatmentColumn" prefWidth="140.0" text="Behandling" />
+                <TableColumn fx:id="statusColumn" prefWidth="75.0" text="Status" />
+            </columns>
+        </TableView>
+
+        <Label layoutX="690.0" layoutY="60.0" text="Medarbejdere">
+            <font>
+                <Font name="System Bold" size="16.0" />
+            </font>
+        </Label>
+
+        <TableView fx:id="employeeTable" layoutX="690.0" layoutY="85.0" prefHeight="250.0" prefWidth="330.0">
+            <columns>
+                <TableColumn fx:id="employeeNameColumn" prefWidth="165.0" text="Navn" />
+                <TableColumn fx:id="employeePhoneNumberColumn" prefWidth="160.0" text="Telefon" />
+            </columns>
+        </TableView>
+
+        <VBox layoutX="690.0" layoutY="350.0" prefWidth="330.0" spacing="12.0">
+            <children>
+                <Label text="Håndter Medarbejder">
+                    <font>
+                        <Font name="System Bold" size="14.0" />
+                    </font>
+                </Label>
+
+                <VBox spacing="2.0">
+                    <Label text="Navn:" />
+                    <TextField fx:id="employeeNameField" promptText="F.eks. Monika" />
+                </VBox>
+
+                <VBox spacing="2.0">
+                    <Label text="Telefonnummer:" />
+                    <TextField fx:id="employeePhoneNumberField" promptText="F.eks. 12345678" />
+                </VBox>
+
+                <VBox spacing="2.0">
+                    <Label text="Password:" />
+                    <PasswordField fx:id="employeePasswordField" promptText="***" />
+                </VBox>
+
+                <VBox spacing="10.0" style="-fx-padding: 10 0 0 0;">
+                    <Button fx:id="addEmployeeButton" mnemonicParsing="false" onAction="#onAddEmployee" prefWidth="330.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" text="Opret Medarbejder" />
+                    <Button fx:id="deleteEmployeeButton" mnemonicParsing="false" onAction="#onDeleteEmployee" prefWidth="330.0" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold;" text="Slet Valgt Medarbejder" />
+                </VBox>
+            </children>
+        </VBox>
+
+    </children>
 </AnchorPane>

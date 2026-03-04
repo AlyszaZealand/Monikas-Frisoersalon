@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.monikasfrisoersalon.Model.Appointment;
 import org.example.monikasfrisoersalon.Model.Employee;
 import org.example.monikasfrisoersalon.Model.User;
@@ -27,6 +26,7 @@ public class AdminController {
     private final TreatmentService treatmentService;
 
 
+
     public AdminController(User currentUser, EmployeeService employeeService, AppointmentService appointmentService, TreatmentService treatmentService) {
         this.currentUser = currentUser;
         this.employeeService = employeeService;
@@ -45,14 +45,22 @@ public class AdminController {
     @FXML private TableColumn<Appointment, String> statusColumn;
 
     @FXML private TableView<Employee> employeeTable; // Tabel til employees
-    @FXML private TableColumn<Appointment, String> employeeNameColumn; // Navn på employee
-    @FXML private TableColumn<Appointment, String> employeePhoneNumberColumn; // employee telefonnummer
+    @FXML private TableColumn<Employee, String> employeeNameColumn; // Navn på employee
+    @FXML private TableColumn<Employee, String> employeePhoneNumberColumn; // employee telefonnummer
 
     // Labels
     @FXML private Label usernameText;
 
+    //Kalender
+    @FXML private DatePicker appointmentDatePicker;
+
     // Knapper
     @FXML private Button logoutButton;
+
+    //Textfields
+    @FXML private TextField employeeNameField;
+    @FXML private TextField employeePasswordField;
+    @FXML private TextField employeePhoneNumberField;
 
     // Admin specifikke knapper
     @FXML private Button deleteEmployeeButton;
@@ -64,47 +72,98 @@ public class AdminController {
     // Tilføj Appointment
     @FXML
     private void onAddEmployee() {
+        try {
+            String name = employeeNameField.getText();
+            String password = employeePasswordField.getText();
+            String phoneText = employeePhoneNumberField.getText();
 
+
+            if (name == null || name.trim().isEmpty() ||
+                    phoneText == null || phoneText.trim().isEmpty() ||
+                    password == null || password.trim().isEmpty()) {
+                AlertController.showAlert(Alert.AlertType.WARNING, "Udfyld venligst Navn, Telefon og Password for at oprette en medarbejder.");
+                return;
+            }
+
+            int phoneNumber = Integer.parseInt(phoneText);
+
+            Employee newEmployee = new Employee(0, name, password, phoneNumber);
+            employeeService.createEmployee(newEmployee);
+
+            employeeNameField.clear();
+            employeePasswordField.clear();
+            employeePhoneNumberField.clear();
+
+            AlertController.showAlert(Alert.AlertType.CONFIRMATION,"Medarbejder oprettet i systemet");
+            loadEmployees();
+
+
+        } catch (NumberFormatException e){
+            AlertController.showAlert(Alert.AlertType.ERROR,"Fejl: Telefonnummeret skal være et gyldigt heltal.");
+        } catch (IllegalArgumentException e){
+            AlertController.showAlert(Alert.AlertType.ERROR, "Fejl: " + e.getMessage());
+        } catch (java.time.format.DateTimeParseException e){
+            AlertController.showAlert(Alert.AlertType.ERROR,"Vælg venligst et gyldgit tidspunkt som f.eks. '10:30'");
+        } catch (Exception e){
+            AlertController.showAlert(Alert.AlertType.ERROR,"Fejl ved oprettelse af medarbejder: " + e.getMessage());
+        }
     }
 
     // Slet Appointment
     @FXML
     private void onDeleteEmployee() {
 
-    }
+        Employee selectedEmployee = employeeTable.getSelectionModel().getSelectedItem();
+        if (selectedEmployee == null) {
+            AlertController.showAlert(Alert.AlertType.WARNING, "Vælg venligst en medarbejder for at slette.");
+            return;
+        }
 
-    // Rediger Appointment
-    @FXML
-    private void  onEditEmployee() {
-
-    }
-
-    // Calendar
-//    private void CalendarTable() {
-//        employeeNameColumn.cellFactoryProperty(new PropertyValueFactory<>("Navn")); // Navn column
-//        employeePhoneNumberColumn.cellFactoryProperty(new PropertyValueFactory<>("Telefonnummer")); // Telefonnummer column
-//
-//    }
-
-    // Log Ud
-    @FXML
-    private void onLogout(ActionEvent event, User user) {
         try {
-            SceneSwitch.switchScene(event, "/login-view.fxml", user, "Login");
+            employeeService.removeEmployeeSafely(selectedEmployee.getId());
+            AlertController.showAlert(Alert.AlertType.CONFIRMATION, "Medarbejder slettet uden at påvirke eksisterende aftaler.");
+            loadEmployees(); // Opdater tabellen
+        } catch (IllegalArgumentException e) {
+            AlertController.showAlert(Alert.AlertType.ERROR, "Kunne ikke slette");
+        }
+
+    }
+
+
+    @FXML
+    private void onLogout(ActionEvent event) {
+        try {
+            SceneSwitch.switchScene(event, "/org/example/monikasfrisoersalon/login-view.fxml",currentUser, "Login");
             AlertController.showAlert(Alert.AlertType.CONFIRMATION, "Log ud");
         } catch (IOException e) {
-            e.printStackTrace();
+            AlertController.showAlert(Alert.AlertType.ERROR, "Fejl ved indlæsning af scene: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void initialize() {
+        setupAppointmentColumns();
+        loadAppointments();
+        setupEmployeeColumns();
+        loadEmployees();
+
+        if (usernameText != null) {
+            usernameText.setText("Logget ind som Admin: " + currentUser.getUsername());
+        }
+
+        if (employeeTable != null) {
+            employeeTable.getSelectionModel().selectedItemProperty().addListener((obs, gammelValg, nytValg) -> {
+                if (nytValg != null) {
+                    employeeNameField.setText(nytValg.getUsername());
+                    employeePhoneNumberField.setText(String.valueOf(nytValg.getPhoneNumber()));
+                    // Af sikkerhedshensyn udfylder vi ikke password-feltet. Hvis det står tomt ved redigering, beholder vi bare det gamle password.
+                }
+            });
         }
     }
 
 
-    @FXML
-    private void initialize() {
-        setupColumns();
-        loadAppointments();
-    }
-
-    private void setupColumns() {
+    private void setupAppointmentColumns() {
         customerColumn.setCellValueFactory(cell ->
                 new SimpleStringProperty(cell.getValue().getCustomer().getUsername()));
 
@@ -129,11 +188,24 @@ public class AdminController {
                 new SimpleStringProperty(cell.getValue().getAppStatus() ? "Aktiv" : "Aflyst"));
     }
 
-    private void loadAppointments() {
-        List<Appointment> appointmentList = appointmentService.getAllAppointments();
-        appointmentTable .getItems().setAll(appointmentList);
+    private void setupEmployeeColumns() {
+        employeeNameColumn.setCellValueFactory(cell ->
+                new SimpleStringProperty(cell.getValue().getUsername())
+        );
+        employeePhoneNumberColumn.setCellValueFactory(cell ->
+                new SimpleStringProperty(String.valueOf(cell.getValue().getPhoneNumber()))
+        );
     }
 
+    private void loadAppointments() {
+        List<Appointment> appointmentList = appointmentService.getAllAppointments();
+        appointmentTable.getItems().setAll(appointmentList);
+    }
+
+    private void loadEmployees() {
+        List<Employee> employeeList = employeeService.getEmployees();
+        employeeTable.getItems().setAll(employeeList);
 
 
+    }
 }
