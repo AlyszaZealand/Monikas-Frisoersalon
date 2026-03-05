@@ -60,6 +60,7 @@ public class EmployeeController {
     @FXML private Button deleteAppointment;
     @FXML private Button editAppointment;
     @FXML private Button logoutButton;
+    @FXML private Button anonymizeCustomerButton;
 
 
 
@@ -256,6 +257,29 @@ public class EmployeeController {
         } catch (Exception e) {
             AlertController.showAlert(Alert.AlertType.ERROR, "Fejl ved opdatering af aftale: " + e.getMessage());
         }
+    }
+
+    @FXML
+    private void onAnonymizeCustomer() {
+        Appointment selected = appointmentTable.getSelectionModel().getSelectedItem();
+
+        if (selected == null) {
+            AlertController.showAlert(Alert.AlertType.WARNING, "Vælg venligst en aftale for at anonymisere kunden.");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "Er du sikker på, at du vil anonymisere kunden " +
+                        selected.getCustomer().getUsername() + " (GDPR)? Dette kan ikke fortrydes.",
+                ButtonType.YES, ButtonType.NO);
+
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.YES) {
+                customerService.removeCustomerGDPR(selected.getCustomer().getId());
+                AlertController.showAlert(Alert.AlertType.CONFIRMATION, "Kunden er nu anonymiseret i overensstemmelse med GDPR.");
+                loadAppointments(); // Genindlæser tabellen så navnet ændres til "Anonym"
+            }
+        });
     }
 
 

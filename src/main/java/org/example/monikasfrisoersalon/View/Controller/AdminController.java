@@ -65,7 +65,8 @@ public class AdminController {
     // Admin specifikke knapper
     @FXML private Button deleteEmployeeButton;
     @FXML private Button addEmployeeButton;
-    @FXML private Button editEmployeeButton;
+    @FXML private Button revenueButton;
+    @FXML private Button cleanupButton;
 
     // ------------------------------------------------------------------------------------------------------------- //
 
@@ -159,6 +160,40 @@ public class AdminController {
                     // Af sikkerhedshensyn udfylder vi ikke password-feltet. Hvis det står tomt ved redigering, beholder vi bare det gamle password.
                 }
             });
+        }
+    }
+
+    @FXML
+    private void onCleanupOldAppointments() {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                "Er du sikker på, at du vil slette alle aftaler, der er ældre end 5 år?\n(Dette overholder SKATs regler og kan ikke fortrydes).",
+                ButtonType.YES, ButtonType.NO);
+
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.YES) {
+                try {
+                    // Udregn datoen for 5 år siden
+                    java.time.LocalDateTime cutoffDate = java.time.LocalDateTime.now().minusYears(5);
+
+                    // Kald servicen
+                    appointmentService.cleanupOldAppointments(cutoffDate);
+
+                    AlertController.showAlert(Alert.AlertType.CONFIRMATION, "Gamle aftaler er nu slettet fra systemet.");
+                    loadAppointments(); // Husk at opdatere tabellen, så de forsvinder fra skærmen!
+                } catch (Exception e) {
+                    AlertController.showAlert(Alert.AlertType.ERROR, "Der skete en fejl under sletning: " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    @FXML
+    private void onCalculateRevenue() {
+        try {
+            int totalRevenue = appointmentService.getTotalRevenue();
+            AlertController.showAlert(Alert.AlertType.INFORMATION, "Den samlede omsætning for alle fuldførte aftaler er: " + totalRevenue + " kr.");
+        } catch (Exception e) {
+            AlertController.showAlert(Alert.AlertType.ERROR, "Kunne ikke beregne omsætningen: " + e.getMessage());
         }
     }
 

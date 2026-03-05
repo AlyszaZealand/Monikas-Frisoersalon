@@ -28,6 +28,9 @@
         </Label>
 
         <DatePicker fx:id="appointmentDatePicker" layoutX="20.0" layoutY="85.0" prefWidth="200.0" promptText="Filtrer på dato..." />
+        <Button layoutX="240.0" layoutY="85.0" mnemonicParsing="false" onAction="#onCalculateRevenue" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;" text="Vis Samlet Omsætning" />
+
+        <Button layoutX="400.0" layoutY="85.0" mnemonicParsing="false" onAction="#onCleanupOldAppointments" style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-font-weight: bold;" text="Slet Aftaler Ældre End 5 År" />
 
         <TableView fx:id="appointmentTable" layoutX="20.0" layoutY="120.0" prefHeight="500.0" prefWidth="650.0">
             <columns>

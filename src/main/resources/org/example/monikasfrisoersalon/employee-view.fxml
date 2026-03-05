@@ -73,6 +73,7 @@
                 <Button fx:id="addAppointment" mnemonicParsing="false" onAction="#onAddAppointment" prefWidth="240.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" text="Opret ny aftale" />
                 <Button fx:id="editAppointment" mnemonicParsing="false" onAction="#onEditAppointment" prefWidth="240.0" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;" text="Rediger valgt aftale" />
                 <Button fx:id="deleteAppointment" mnemonicParsing="false" onAction="#onDeleteAppointment" prefWidth="240.0" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold;" text="Aflys valgt aftale" />
+                <Button fx:id="anonymizeCustomerButton" mnemonicParsing="false" onAction="#onAnonymizeCustomer" prefWidth="240.0" style="-fx-background-color: #ff9800; -fx-text-fill: white; -fx-font-weight: bold;" text="Anonymiser Kunde (GDPR)" />
             </VBox>
         </children>
     </VBox>
